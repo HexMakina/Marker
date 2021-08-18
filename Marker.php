@@ -1,4 +1,5 @@
 <?php
+
 /**
  * HTML generator
  * Marker, hommage to Christian François Bouche-Villeneuve aka Chris Marker
@@ -25,7 +26,7 @@
   * @method string body(string $innertext, array $attributes) creates the document's body
   * @method string br(string $innertext, array $attributes) creates a single line break
   * @method string button(string $innertext, array $attributes) creates a clickable button
-  * @method string canvas(string $innertext, array $attributes)	used to draw graphics, on the fly, via scripting (usually javascript)
+  * @method string canvas(string $innertext, array $attributes) used to draw graphics, on the fly, via scripting (usually javascript)
   * @method string caption(string $innertext, array $attributes) creates a table caption
   * @method string center(string $innertext, array $attributes) defines centered text (not supported in HTML5. use CSS instead)
   * @method string cite(string $innertext, array $attributes) creates the title of a work
@@ -48,11 +49,11 @@
   * @method string fieldset(string $innertext, array $attributes) groups related elements in a form
   * @method string figcaption(string $innertext, array $attributes) creates a caption for a <figure> element
   * @method string figure(string $innertext, array $attributes) specifies self-contained content
-  * @method string font(string $innertext, array $attributes) defines font, color, and size for text	(not supported in HTML5. use CSS instead)
+  * @method string font(string $innertext, array $attributes) defines font, color, and size for text    (not supported in HTML5. use CSS instead)
   * @method string footer(string $innertext, array $attributes) creates a footer for a document or section
   * @method string form(string $innertext, array $attributes) creates an HTML form for user input
-  * @method string frame(string $innertext, array $attributes) defines a window (a frame) in a frameset	(not supported in HTML5)
-  * @method string frameset(string $innertext, array $attributes) defines a set of frames	(not supported in HTML5)
+  * @method string frame(string $innertext, array $attributes) defines a window (a frame) in a frameset (not supported in HTML5)
+  * @method string frameset(string $innertext, array $attributes) defines a set of frames   (not supported in HTML5)
   * @method string h1(string $innertext, array $attributes) creates HTML headings 1
   * @method string h2(string $innertext, array $attributes) creates HTML headings 2
   * @method string h3(string $innertext, array $attributes) creates HTML headings 3
@@ -78,7 +79,7 @@
   * @method string meta(string $innertext, array $attributes) creates metadata about an HTML document
   * @method string meter(string $innertext, array $attributes) creates a scalar measurement within a known range (a gauge)
   * @method string nav(string $innertext, array $attributes) creates navigation links
-  * @method string noframes(string $innertext, array $attributes) defines an alternate content for users that do not support frames	(not supported in HTML5)
+  * @method string noframes(string $innertext, array $attributes) defines an alternate content for users that do not support frames (not supported in HTML5)
   * @method string noscript(string $innertext, array $attributes) creates an alternate content for users that do not support client-side scripts
   * @method string object(string $innertext, array $attributes) creates a container for an external application
   * @method string ol(string $innertext, array $attributes) creates an ordered list
@@ -102,7 +103,7 @@
   * @method string small(string $innertext, array $attributes) creates smaller text
   * @method string source(string $innertext, array $attributes) creates multiple media resources for media elements (<video> and <audio>)
   * @method string span(string $innertext, array $attributes) creates a section in a document
-  * @method string strike(string $innertext, array $attributes) defines strikethrough text	not supported in HTML5. use del() or s() instead.
+  * @method string strike(string $innertext, array $attributes) defines strikethrough text  not supported in HTML5. use del() or s() instead.
   * @method string strong(string $innertext, array $attributes) creates important text
   * @method string style(string $innertext, array $attributes) creates style information for a document
   * @method string sub(string $innertext, array $attributes) creates subscripted text
@@ -133,55 +134,59 @@ namespace HexMakina\Marker;
 class Marker
 {
   //::span('inner text', $attributes)
-  public static function __callStatic($element_type, $arguments)
-  {
-    $i=0;
-    $element_inner =$arguments[$i++]??null;
-    $attributes=$arguments[$i++]??[];
+    public static function __callStatic($element_type, $arguments)
+    {
+        $i = 0;
+        $element_inner = $arguments[$i++] ?? null;
+        $attributes = $arguments[$i++] ?? [];
 
-    return new Element($element_type, $element_inner, $attributes);
-  }
+        return new Element($element_type, $element_inner, $attributes);
+    }
 
   // TODO labels should mandatory, accessibility
   // TODO implement all options of font-awesome
-  public static function fas($icon, $title=null, $attributes=[])
-  {
-    $attributes['title'] = $attributes['title'] ?? $title; // attributes take precedence
-    $attributes['class'] = sprintf('fas fa-%s %s', $icon, $attributes['class'] ?? '');
-    return new Element('i','', $attributes);
-  }
-
-  public static function checkbutton($field_name, $field_value, $field_label, $attributes=[])
-  {
-    if(!isset($attributes['id']))
-      $attributes['id']=$field_name;
-
-    if(!isset($attributes['type']))
-      $attributes['type']='checkbox'; // default
-
-    if(isset($attributes['is_checked']) && $attributes['is_checked'] === true) // for boolean checkbuttons
+    public static function fas($icon, $title = null, $attributes = [])
     {
-      $attributes['checked'] = 'checked';
-      unset($attributes['is_checked']);
+        $attributes['title'] = $attributes['title'] ?? $title; // attributes take precedence
+        $attributes['class'] = sprintf('fas fa-%s %s', $icon, $attributes['class'] ?? '');
+        return new Element('i', '', $attributes);
     }
 
-    return
-      Marker::div(
-        Marker::label(Form::input($field_name, $field_value, $attributes).Marker::span($field_label),
-        ['for' => $attributes['id']]),
-      ['class'=>'checkbutton']);
-  }
+    public static function checkbutton($field_name, $field_value, $field_label, $attributes = [])
+    {
+        if (!isset($attributes['id'])) {
+            $attributes['id'] = $field_name;
+        }
 
-  public static function img($src, $title, $attributes=[])
-  {
-    $attributes['src'] = $attributes['src'] ?? $src;
-    $attributes['title'] = $attributes['title'] ?? $title;
-    return new Element('img', null, $attributes);
-  }
+        if (!isset($attributes['type'])) {
+            $attributes['type'] = 'checkbox'; // default
+        }
 
-  public static function a($href, $label, $attributes=[])
-  {
-    $attributes['href'] = $attributes['href'] ?? $href;
-    return new Element('a', $label, $attributes);
-  }
+        if (isset($attributes['is_checked']) && $attributes['is_checked'] === true) { // for boolean checkbuttons
+            $attributes['checked'] = 'checked';
+            unset($attributes['is_checked']);
+        }
+
+        return
+        Marker::div(
+            Marker::label(
+                Form::input($field_name, $field_value, $attributes) . Marker::span($field_label),
+                ['for' => $attributes['id']]
+            ),
+            ['class' => 'checkbutton']
+        );
+    }
+
+    public static function img($src, $title, $attributes = [])
+    {
+        $attributes['src'] = $attributes['src'] ?? $src;
+        $attributes['title'] = $attributes['title'] ?? $title;
+        return new Element('img', null, $attributes);
+    }
+
+    public static function a($href, $label, $attributes = [])
+    {
+        $attributes['href'] = $attributes['href'] ?? $href;
+        return new Element('a', $label, $attributes);
+    }
 }
