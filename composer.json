@@ -3,7 +3,7 @@
     "description": "Marker is an HTML generator",
     "type": "package",
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.3"
     },
     "license": "mit",
     "authors": [
