@@ -84,10 +84,14 @@ class Form
 
     public static function submit($field_id, $field_label, $attributes = [])
     {
-        $attributes['id'] = $attributes['id'] ?? $field_id;
-        unset($attributes['name']);
         $attributes['type'] = 'submit';
+        unset($attributes['name']);
+
+        $attributes['id'] = $attributes['id'] ?? $field_id;
+        $attributes['value'] = $attributes['value'] ?? $field_label;
+
         if (isset($attributes['tag']) && $attributes['tag'] === 'input') {
+            unset($attributes['tag']);
             return new Element('input', '', $attributes);
         } else {
             unset($attributes['tag']);
