@@ -46,13 +46,13 @@ class Form
         $attributes['name'] = $attributes['name'] ?? $field_name;
         $attributes['value'] = $attributes['value'] ?? $field_value;
 
-        return self::element_with_errors('input', null, $attributes, isset($errors[$field_name]));
+        return self::elementWithErrors('input', null, $attributes, isset($errors[$field_name]));
     }
 
     public static function textarea($field_name, $field_value = null, $attributes = [], $errors = [])
     {
         $attributes['name'] = $attributes['name'] ?? $field_name;
-        return self::element_with_errors('textarea', $field_value, $attributes, isset($errors[$field_name]));
+        return self::elementWithErrors('textarea', $field_value, $attributes, isset($errors[$field_name]));
     }
 
     public static function select($field_name, $option_list, $selected = null, $attributes = [], $errors = [])
@@ -68,7 +68,7 @@ class Form
 
             $options .= new Element('option', $label, $option_attributes);
         }
-        return self::element_with_errors('select', $options, $attributes, isset($errors[$field_name]));
+        return self::elementWithErrors('select', $options, $attributes, isset($errors[$field_name]));
     }
 
     public static function legend($label, $attributes = [])
@@ -79,15 +79,19 @@ class Form
     public static function label($field_for, $field_label, $attributes = [], $errors = [])
     {
         $attributes['for'] = $field_for;
-        return self::element_with_errors('label', $field_label, $attributes, isset($errors[$field_for]));
+        return self::elementWithErrors('label', $field_label, $attributes, isset($errors[$field_for]));
     }
 
     public static function submit($field_id, $field_label, $attributes = [])
     {
-        $attributes['id'] = $attributes['id'] ?? $field_id;
-        unset($attributes['name']);
         $attributes['type'] = 'submit';
+        unset($attributes['name']);
+
+        $attributes['id'] = $attributes['id'] ?? $field_id;
+        $attributes['value'] = $attributes['value'] ?? $field_label;
+
         if (isset($attributes['tag']) && $attributes['tag'] === 'input') {
+            unset($attributes['tag']);
             return new Element('input', '', $attributes);
         } else {
             unset($attributes['tag']);
@@ -96,7 +100,7 @@ class Form
         }
     }
 
-    private static function element_with_errors($tag, $content, $attributes = [], $errors = false)
+    private static function elementWithErrors($tag, $content, $attributes = [], $errors = false)
     {
 
         $attributes['id'] = $attributes['id'] ?? $attributes['name'] ?? '';

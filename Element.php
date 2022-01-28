@@ -4,14 +4,17 @@ namespace HexMakina\Marker;
 
 class Element
 {
-    const VOID_ELEMENTS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+    const VOID_ELEMENTS = [
+      'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+      'link', 'meta', 'param', 'source', 'track', 'wbr'
+    ];
 
     protected $tagName = '';
     protected $attributeList = [];
     protected $classList = [];
     protected $innerContent = '';
 
-    public function is_void()
+    public function isVoid()
     {
         return in_array($this->tagName, self::VOID_ELEMENTS);
     }
@@ -23,7 +26,7 @@ class Element
         $this->innerContent = $innerContent ?? '';
     }
 
-    private function format_attributes()
+    private function formatAttributes()
     {
         $ret = '';
 
@@ -38,10 +41,10 @@ class Element
 
     public function __toString()
     {
-        $flattributes = $this->format_attributes();
+        $flattributes = $this->formatAttributes();
 
         $ret = '';
-        if ($this->is_void()) {
+        if ($this->isVoid()) {
             $ret = sprintf('<%s%s/>', $this->tagName, $flattributes);
         } else {
             $ret = sprintf(
