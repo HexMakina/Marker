@@ -4,7 +4,7 @@ namespace HexMakina\Marker;
 
 class Element
 {
-    const VOID_ELEMENTS = [
+    public const VOID_ELEMENTS = [
       'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
       'link', 'meta', 'param', 'source', 'track', 'wbr'
     ];
@@ -32,18 +32,20 @@ class Element
         foreach ($this->attributes as $k => $v) {
             if ($this->isValidValue($v)) {
                 $ret .
-                =  ' '.($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
+                =  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
             }
         }
         return $ret;
     }
 
-    private function isBooleanAttribute($k){
-      return is_int($k);
+    private function isBooleanAttribute($k)
+    {
+        return is_int($k);
     }
 
-    private function isValidValue($v){
-      return !(is_null($v) && $v === '' && is_array($v));
+    private function isValidValue($v)
+    {
+        return !(is_null($v) && $v === '' && is_array($v));
     }
 
     public function __toString()
