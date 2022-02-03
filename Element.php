@@ -9,34 +9,41 @@ class Element
       'link', 'meta', 'param', 'source', 'track', 'wbr'
     ];
 
-    protected $tagName = '';
-    protected $attributeList = [];
-    protected $classList = [];
-    protected $innerContent = '';
+    protected $tag = '';
+    protected $attributes = [];
+    protected $content = '';
 
     public function isVoid()
     {
-        return in_array($this->tagName, self::VOID_ELEMENTS);
+        return in_array($this->tag, self::VOID_ELEMENTS);
     }
 
-    public function __construct($tagName, $innerContent = null, $attributeList = [])
+    public function __construct($tag, $content = null, $attributes = [])
     {
-        $this->tagName = $tagName;
-        $this->attributeList = $attributeList;
-        $this->innerContent = $innerContent ?? '';
+        $this->tag = $tag;
+        $this->attributes = $attributes;
+        $this->content = $content ?? '';
     }
 
     private function formatAttributes()
     {
         $ret = '';
 
-        foreach ($this->attributeList as $k => $v) {
-            if (!is_null($v) && $v !== '' && !is_array($v)) {
-                $ret .=  is_int($k) ? " $v" : sprintf(' %s="%s"', $k, $v);
+        foreach ($this->attributes as $k => $v) {
+            if ($this->isValidValue($v)) {
+                $ret .
+                =  ' '.($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
             }
         }
-
         return $ret;
+    }
+
+    private function isBooleanAttribute($k){
+      return is_int($k);
+    }
+
+    private function isValidValue($v){
+      return !(is_null($v) && $v === '' && is_array($v));
     }
 
     public function __toString()
@@ -45,14 +52,14 @@ class Element
 
         $ret = '';
         if ($this->isVoid()) {
-            $ret = sprintf('<%s%s/>', $this->tagName, $flattributes);
+            $ret = sprintf('<%s%s/>', $this->tag, $flattributes);
         } else {
             $ret = sprintf(
                 '<%s%s>%s</%s>',
-                $this->tagName,
+                $this->tag,
                 $flattributes,
-                $this->innerContent,
-                $this->tagName
+                $this->content,
+                $this->tag
             );
         }
 

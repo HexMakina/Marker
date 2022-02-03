@@ -143,8 +143,8 @@ class Marker
         return new Element($element_type, $element_inner, $attributes);
     }
 
-  // TODO labels should mandatory, accessibility
-  // TODO implement all options of font-awesome
+    // TODO labels should mandatory, accessibility
+    // TODO implement all options of font-awesome
     public static function fas($icon, $title = null, $attributes = [])
     {
         $attributes['title'] = $attributes['title'] ?? $title; // attributes take precedence
