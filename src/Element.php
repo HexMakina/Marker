@@ -134,6 +134,11 @@ class Element
       'link', 'meta', 'param', 'source', 'track', 'wbr'
     ];
 
+    public const FORMAT_VOID = '<%s%s/>';
+    public const FORMAT_ELEMENT = '<%s%s>%s</%s>';
+    public const FORMAT_ATTRIBUTES = '%s="%s"';
+
+
     protected $tag = '';
     protected $attributes = [];
     protected $content = '';
@@ -162,15 +167,15 @@ class Element
         $ret = '';
         if ($this->isVoid()) {
             $ret = sprintf(
-                '<%s%s/>',
+                self::FORMAT_VOID,
                 $this->tag,
-                $this->attributesToString()
+                self::attributesAsString($this->attributes),
             );
         } else {
             $ret = sprintf(
-                '<%s%s>%s</%s>',
+                self::FORMAT_ELEMENT,
                 $this->tag,
-                $this->attributesToString(),
+                self::attributesAsString($this->attributes),
                 $this->content,
                 $this->tag
             );
@@ -184,24 +189,23 @@ class Element
     }
 
 
-    private function isBooleanAttribute($k)
+    private static function isBooleanAttribute($k)
     {
         return is_int($k);
     }
 
-    private function isValidValue($v)
+    private static function isValidValue($v)
     {
         return !(is_null($v) && $v === '' && is_array($v));
     }
 
-    private function attributesToString()
-    {
-        $ret = '';
-        foreach ($this->attributes as $k => $v) {
-            if ($this->isValidValue($v)) {
-                $ret .=  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
-            }
-        }
-        return $ret;
+    public static function attributesAsString($attributes = []){
+      $ret = '';
+      foreach ($attributes as $k => $v) {
+          if (self::isValidValue($v)) {
+              $ret .=  ' ' . (self::isBooleanAttribute($k) ? $v : sprintf(self::FORMAT_ATTRIBUTES, $k, $v));
+          }
+      }
+      return $ret;
     }
 }
