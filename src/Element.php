@@ -124,7 +124,7 @@
  * @method string video(string $content, array $attr) creates embedded video content
  * @method string wbr(string $content, array $attr) creates a possible line-break
  */
- 
+
 namespace HexMakina\Marker;
 
 class Element
@@ -142,7 +142,7 @@ class Element
     {
         $this->tag = $tag;
         $this->attributes = $attributes;
-        $this->content = $content ?? '';
+        $this->content = is_string($content) ? $content : '';
     }
 
     //::span('inner text', $attributes)
@@ -154,26 +154,33 @@ class Element
         // second argument, an array for HTML attributes
         $attributes = $arguments[$i++] ?? [];
 
-        return new Element($element_type, $element_inner, $attributes);
+        return (new Element($element_type, $element_inner, $attributes))->__toString();
     }
 
+    public function __toString()
+    {
+        $ret = '';
+        if ($this->isVoid()) {
+            $ret = sprintf('<%s%s/>',
+                $this->tag,
+                $this->attributesToString());
+        } else {
+            $ret = sprintf(
+                '<%s%s>%s</%s>',
+                $this->tag,
+                $this->attributesToString(),
+                $this->content,
+                $this->tag
+            );
+        }
+        return $ret;
+    }
 
     public function isVoid()
     {
         return in_array($this->tag, self::VOID_ELEMENTS);
     }
 
-    private function formatAttributes()
-    {
-        $ret = '';
-
-        foreach ($this->attributes as $k => $v) {
-            if ($this->isValidValue($v)) {
-                $ret .=  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
-            }
-        }
-        return $ret;
-    }
 
     private function isBooleanAttribute($k)
     {
@@ -185,23 +192,14 @@ class Element
         return !(is_null($v) && $v === '' && is_array($v));
     }
 
-    public function __toString()
-    {
-        $flattributes = $this->formatAttributes();
-
-        $ret = '';
-        if ($this->isVoid()) {
-            $ret = sprintf('<%s%s/>', $this->tag, $flattributes);
-        } else {
-            $ret = sprintf(
-                '<%s%s>%s</%s>',
-                $this->tag,
-                $flattributes,
-                $this->content,
-                $this->tag
-            );
-        }
-
-        return $ret;
+    private function attributesToString(){
+      $ret = '';
+      foreach ($this->attributes as $k => $v) {
+          if ($this->isValidValue($v)) {
+              $ret .=  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
+          }
+      }
+      return $ret;
     }
+
 }
