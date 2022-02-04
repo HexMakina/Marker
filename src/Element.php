@@ -199,13 +199,14 @@ class Element
         return !(is_null($v) && $v === '' && is_array($v));
     }
 
-    public static function attributesAsString($attributes = []){
-      $ret = '';
-      foreach ($attributes as $k => $v) {
-          if (self::isValidValue($v)) {
-              $ret .=  ' ' . (self::isBooleanAttribute($k) ? $v : sprintf(self::FORMAT_ATTRIBUTES, $k, $v));
-          }
-      }
-      return $ret;
+    public static function attributesAsString($attributes = [])
+    {
+        $ret = '';
+        foreach ($attributes as $k => $v) {
+            if (self::isValidValue($v)) {
+                $ret .=  ' ' . (self::isBooleanAttribute($k) ? $v : sprintf(self::FORMAT_ATTRIBUTES, $k, $v));
+            }
+        }
+        return $ret;
     }
 }
