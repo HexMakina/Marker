@@ -5,7 +5,6 @@
  * Marker, hommage to Christian François Bouche-Villeneuve aka Chris Marker
  */
 
-
 namespace HexMakina\Marker;
 
 class Marker

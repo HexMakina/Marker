@@ -161,9 +161,11 @@ class Element
     {
         $ret = '';
         if ($this->isVoid()) {
-            $ret = sprintf('<%s%s/>',
+            $ret = sprintf(
+                '<%s%s/>',
                 $this->tag,
-                $this->attributesToString());
+                $this->attributesToString()
+            );
         } else {
             $ret = sprintf(
                 '<%s%s>%s</%s>',
@@ -192,14 +194,14 @@ class Element
         return !(is_null($v) && $v === '' && is_array($v));
     }
 
-    private function attributesToString(){
-      $ret = '';
-      foreach ($this->attributes as $k => $v) {
-          if ($this->isValidValue($v)) {
-              $ret .=  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
-          }
-      }
-      return $ret;
+    private function attributesToString()
+    {
+        $ret = '';
+        foreach ($this->attributes as $k => $v) {
+            if ($this->isValidValue($v)) {
+                $ret .=  ' ' . ($this->isBooleanAttribute($k) ? $v : sprintf('%s="%s"', $k, $v));
+            }
+        }
+        return $ret;
     }
-
 }
