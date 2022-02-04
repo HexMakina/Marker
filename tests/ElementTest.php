@@ -9,7 +9,7 @@ final class ElementTest extends TestCase
   public function testEmptyConstructor(): void
   {
       $this->expectException(ArgumentCountError::class);
-      $e = new Element();
+      new Element();
   }
 
   public function testCreateEmptyElement(): void
