@@ -3,8 +3,12 @@
 namespace HexMakina\Marker;
 
 /**
-*
-*/
+  * @method static string hidden(string $name, $value=null)
+  * @method static string date()
+  * @method static string time()
+  * @method static string datetime()
+  */
+  
 class Form
 {
 
