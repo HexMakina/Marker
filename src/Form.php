@@ -8,11 +8,11 @@ namespace HexMakina\Marker;
   * @method static string time()
   * @method static string datetime()
   */
-  
+
 class Form
 {
 
-    public static function __callStatic($element_type, $arguments)
+    public static function __callStatic($element_type, $arguments) : string
     {
       // arguments [name, value, [attributes], [errors]]
         $i = 0;
@@ -38,13 +38,10 @@ class Form
         return self::input($field_name, $field_value, $attributes, $errors);
     }
 
-    public static function input($field_name, $field_value = null, $attributes = [], $errors = [])
+    public static function input($field_name, $field_value = null, $attributes = [], $errors = []) : string
     {
-
-        if (isset($attributes['disabled']) || !isset($attributes['type']) || in_array('disabled', $attributes, true)) {
+        if (!isset($attributes['type']) || isset($attributes['disabled']) || in_array('disabled', $attributes, true)) {
             $attributes['type'] = 'text';
-        } else {
-            $attributes['type'] = $attributes['type'] ?? 'text';
         }
 
         $attributes['name'] = $attributes['name'] ?? $field_name;
@@ -53,13 +50,13 @@ class Form
         return self::elementWithErrors('input', null, $attributes, isset($errors[$field_name]));
     }
 
-    public static function textarea($field_name, $field_value = null, $attributes = [], $errors = [])
+    public static function textarea($field_name, $field_value = null, $attributes = [], $errors = []) : string
     {
         $attributes['name'] = $attributes['name'] ?? $field_name;
         return self::elementWithErrors('textarea', $field_value, $attributes, isset($errors[$field_name]));
     }
 
-    public static function select($field_name, $option_list, $selected = null, $attributes = [], $errors = [])
+    public static function select($field_name, $option_list, $selected = null, $attributes = [], $errors = []) : string
     {
         $attributes['name'] = $attributes['name'] ?? $field_name;
 
@@ -75,19 +72,21 @@ class Form
         return self::elementWithErrors('select', $options, $attributes, isset($errors[$field_name]));
     }
 
-    public static function legend($label, $attributes = [])
+    public static function legend($label, $attributes = []) : string
     {
-        return new Element('legend', $label, $attributes);
+        return ''.(new Element('legend', $label, $attributes));
     }
 
-    public static function label($field_for, $field_label, $attributes = [], $errors = [])
+    public static function label($field_for, $field_label, $attributes = [], $errors = []) : string
     {
         $attributes['for'] = $field_for;
         return self::elementWithErrors('label', $field_label, $attributes, isset($errors[$field_for]));
     }
 
-    public static function submit($field_id, $field_label, $attributes = [])
+    public static function submit($field_id, $field_label, $attributes = []) : string
     {
+        $ret = '';
+
         $attributes['type'] = 'submit';
         unset($attributes['name']);
 
@@ -96,15 +95,17 @@ class Form
 
         if (isset($attributes['tag']) && $attributes['tag'] === 'input') {
             unset($attributes['tag']);
-            return new Element('input', '', $attributes);
+            $ret .= new Element('input', '', $attributes);
         } else {
             unset($attributes['tag']);
             unset($attributes['value']);
-            return new Element('button', $field_label, $attributes);
+            $ret .= new Element('button', $field_label, $attributes);
         }
+
+        return $ret;
     }
 
-    private static function elementWithErrors($tag, $content, $attributes = [], $errors = false)
+    private static function elementWithErrors($tag, $content, $attributes = [], $errors = false) : string
     {
 
         $attributes['id'] = $attributes['id'] ?? $attributes['name'] ?? '';
