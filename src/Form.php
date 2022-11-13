@@ -12,18 +12,15 @@ namespace HexMakina\Marker;
 class Form
 {
 
-    /**
-     * @param array<int,mixed> $arguments
-     */
+
     public static function __callStatic(string $element_type, array $arguments): string
     {
       // arguments [name, value, [attributes], [errors]]
         $i = 0;
         $field_name =  $arguments[$i++] ?? null;
         $field_value = $arguments[$i++] ?? null;
-        $attributes =  $arguments[$i++] ?? [];
-        $errors =      $arguments[$i++] ?? [];
-
+        $attributes =  (array)($arguments[$i++] ?? []);
+        $errors =      (array)($arguments[$i++] ?? []);
 
         $attributes['type'] = $element_type;
         $attributes['name'] = $attributes['name'] ?? $field_name;
@@ -38,13 +35,11 @@ class Form
                 $attributes['value'] = '';
                 break;
         }
+
         return self::input($field_name, $field_value, $attributes, $errors);
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     * @param array<string,mixed> $errors
-     */
+
     public static function input(string $field_name, mixed $field_value = null, array $attributes = [], array $errors = []): string
     {
         if (!isset($attributes['type']) || isset($attributes['disabled']) || in_array('disabled', $attributes, true)) {
@@ -57,21 +52,14 @@ class Form
         return self::elementWithErrors('input', null, $attributes, isset($errors[$field_name]));
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     * @param array<string,mixed> $errors
-     */
+
     public static function textarea(string $field_name, mixed $field_value = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] = $attributes['name'] ?? $field_name;
         return self::elementWithErrors('textarea', $field_value, $attributes, isset($errors[$field_name]));
     }
 
-    /**
-     * @param array<string,string> $option_list
-     * @param array<mixed,mixed> $attributes
-     * @param array<string,mixed> $errors
-     */
+
     public static function select(string $field_name, array $option_list, mixed $selected = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] = $attributes['name'] ?? $field_name;
@@ -87,27 +75,21 @@ class Form
         }
         return self::elementWithErrors('select', $options, $attributes, isset($errors[$field_name]));
     }
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
-    public static function legend(string $label,  array $attributes = []): string
+
+    public static function legend(string $label, array $attributes = []): string
     {
         return '' . (new Element('legend', $label, $attributes));
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     * @param array<string,mixed> $errors
-     */
     public static function label(string $field_for, string $field_label, array $attributes = [], array $errors = []): string
     {
         $attributes['for'] = $field_for;
+        unset($attributes['label']);
+
         return self::elementWithErrors('label', $field_label, $attributes, isset($errors[$field_for]));
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
+
     public static function submit(string $field_id, string $field_label, array $attributes = []): string
     {
         $ret = '';
@@ -129,10 +111,9 @@ class Form
 
         return $ret;
     }
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
-    private static function elementWithErrors(string $tag, string $content=null, array $attributes = [], bool $hasErrors = false): string
+
+
+    private static function elementWithErrors(string $tag, string $content = null, array $attributes = [], bool $hasErrors = false): string
     {
         $attributes['id'] = $attributes['id'] ?? $attributes['name'] ?? '';
 
@@ -143,11 +124,10 @@ class Form
 
         $label = '';
         if (isset($attributes['label'])) {
-            $label = self::label($attributes['id'], $attributes['label'], [], [$attributes['id'] => true]);
+            $label = self::label($attributes['id'], $attributes['label'], [], [''.$attributes['id'] => 'error']);
             unset($attributes['label']);
         }
 
-      // vd($attributes, $tag);
         return $label . (new Element($tag, $content, $attributes));
     }
 }

@@ -255,9 +255,7 @@ class Marker
 {
     //::span('inner text', $attributes)
 
-    /**
-     * @param array<int,string> $arguments
-     */
+
     public static function __callStatic(string $element_type, array $arguments): Element
     {
         $i = 0;
@@ -271,9 +269,6 @@ class Marker
 
     // TODO labels should mandatory, accessibility
     // TODO implement all options of font-awesome
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
     public static function fas(string $icon, string $title = null, array $attributes = []): Element
     {
         $attributes['title'] = $attributes['title'] ?? $title; // attributes take precedence
@@ -281,9 +276,7 @@ class Marker
         return new Element('i', '', $attributes);
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
+
     public static function checkbutton(string $field_name, mixed $field_value, string $field_label, array $attributes = []): Element
     {
         if (!isset($attributes['id'])) {
@@ -309,9 +302,7 @@ class Marker
         );
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
+
     public static function img(string $src, string $title, array $attributes = []): Element
     {
         $attributes['src'] = $attributes['src'] ?? $src;
@@ -319,9 +310,7 @@ class Marker
         return new Element('img', null, $attributes);
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
+
     public static function a(string $href, string $label, array $attributes = []): Element
     {
         $attributes['href'] = $attributes['href'] ?? $href;

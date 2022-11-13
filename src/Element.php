@@ -15,16 +15,12 @@ class Element
 
 
     protected string $tag;
-    /**
-     * @var array<mixed,mixed> $attributes
-     */
+
     protected array $attributes;
-    
+
     protected string $content;
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
+
     public function __construct(string $tag, string $content = null, array $attributes = [])
     {
         $this->tag = $tag;
@@ -55,26 +51,23 @@ class Element
         return $ret;
     }
 
-    public function isVoid() : bool
+    public function isVoid(): bool
     {
         return in_array($this->tag, self::VOID_ELEMENTS);
     }
 
 
-    private static function isBooleanAttribute(mixed $k) : bool
+    private static function isBooleanAttribute($k): bool
     {
         return is_int($k);
     }
 
-    private static function isValidValue(mixed $v) : bool
+    private static function isValidValue($v): bool
     {
         return !is_null($v) && $v != '' && !is_array($v);
     }
 
-    /**
-     * @param array<mixed,mixed> $attributes
-     */
-    public static function attributesAsString(array $attributes = []) : string
+    public static function attributesAsString(array $attributes = []): string
     {
         $ret = '';
         foreach ($attributes as $k => $v) {
