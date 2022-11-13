@@ -15,6 +15,7 @@ final class ElementTest extends TestCase
     $this->tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'slot', 'small', 'source', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'SVG svg', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr'];
 
   }
+
   public function testEmptyConstructor(): void
   {
       $this->expectException(ArgumentCountError::class);
@@ -26,16 +27,12 @@ final class ElementTest extends TestCase
     foreach($this->tags as $tag)
     {
       $e = new Element($tag);
-
       if(in_array($tag, Element::VOID_ELEMENTS)){
         $this->assertEquals('<'.$tag.'/>', $e->__toString());
       }
       else {
         $this->assertEquals("<$tag></$tag>", $e->__toString());
       }
-
-      $e_stat = Element::$tag();
-      $this->assertEquals($e_stat, $e->__toString());
     }
   }
 
@@ -54,13 +51,11 @@ final class ElementTest extends TestCase
         else {
           $this->assertEquals("<$tag>$expected</$tag>", $e->__toString());
         }
-
-        $e_stat = Element::$tag($message);
-        $this->assertEquals($e_stat, $e->__toString());
       }
     }
   }
 
+  // Attributes
   public function testCreateElementWithAttributes(): void
   {
     $message = 'lorem ipsum';
@@ -86,7 +81,6 @@ final class ElementTest extends TestCase
     // testing all HTML tags
     $this->assertForAllHTMLTags($message, $attributes, $attributes_expected_string);
   }
-
 
   public function testAttributesOrdering(): void
   {
@@ -125,10 +119,6 @@ final class ElementTest extends TestCase
       else {
         $this->assertEquals(sprintf(Element::FORMAT_ELEMENT, $tag, $attributes_expected_string, $message, $tag), $e->__toString());
       }
-
-      // testing by callStatic();
-      $e_stat = Element::$tag($message,  $attributes);
-      $this->assertEquals($e_stat, $e->__toString());
     }
   }
 }
