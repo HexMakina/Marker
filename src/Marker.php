@@ -271,7 +271,7 @@ class Marker
     // TODO implement all options of font-awesome
     public static function fas(string $icon, string $title = null, array $attributes = []): Element
     {
-        $attributes['title'] = $attributes['title'] ?? $title; // attributes take precedence
+        $attributes['title'] ??= $title; // attributes take precedence
         $attributes['class'] = sprintf('fas fa-%s %s', $icon, $attributes['class'] ?? '');
         return new Element('i', '', $attributes);
     }
@@ -305,15 +305,15 @@ class Marker
 
     public static function img(string $src, string $title, array $attributes = []): Element
     {
-        $attributes['src'] = $attributes['src'] ?? $src;
-        $attributes['title'] = $attributes['title'] ?? $title;
+        $attributes['src'] ??= $src;
+        $attributes['title'] ??= $title;
         return new Element('img', null, $attributes);
     }
 
 
     public static function a(string $href, string $label, array $attributes = []): Element
     {
-        $attributes['href'] = $attributes['href'] ?? $href;
+        $attributes['href'] ??= $href;
         return new Element('a', $label, $attributes);
     }
 }

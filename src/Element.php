@@ -4,13 +4,27 @@ namespace HexMakina\Marker;
 
 class Element
 {
+    /**
+     * @var string[]
+     */
     public const VOID_ELEMENTS = [
       'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
       'link', 'meta', 'param', 'source', 'track', 'wbr'
     ];
 
+    /**
+     * @var string
+     */
     public const FORMAT_VOID = '<%s%s/>';
+
+    /**
+     * @var string
+     */
     public const FORMAT_ELEMENT = '<%s%s>%s</%s>';
+
+    /**
+     * @var string
+     */
     public const FORMAT_ATTRIBUTES = '%s="%s"';
 
 
@@ -21,6 +35,9 @@ class Element
     protected string $content;
 
 
+    /**
+     * @param mixed[] $attributes
+     */
     public function __construct(string $tag, string $content = null, array $attributes = [])
     {
         $this->tag = $tag;
@@ -48,6 +65,7 @@ class Element
                 $this->tag
             );
         }
+
         return $ret;
     }
 
@@ -75,6 +93,7 @@ class Element
                 $ret .=  ' ' . (self::isBooleanAttribute($k) ? $v : sprintf(self::FORMAT_ATTRIBUTES, $k, $v));
             }
         }
+
         return $ret;
     }
 }

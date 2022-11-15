@@ -23,17 +23,13 @@ class Form
         $errors =      (array)($arguments[$i++] ?? []);
 
         $attributes['type'] = $element_type;
-        $attributes['name'] = $attributes['name'] ?? $field_name;
-        $attributes['value'] = $attributes['value'] ?? $field_value;
+        $attributes['name'] ??= $field_name;
+        $attributes['value'] ??= $field_value;
 
-        switch ($attributes['type']) {
-            case 'datetime':
-                $attributes['type'] = 'datetime-local';
-                break;
-
-            case 'password':
-                $attributes['value'] = '';
-                break;
+        if ($attributes['type'] == 'datetime') {
+            $attributes['type'] = 'datetime-local';
+        } elseif ($attributes['type'] == 'password') {
+            $attributes['value'] = '';
         }
 
         return self::input($field_name, $field_value, $attributes, $errors);
@@ -46,8 +42,8 @@ class Form
             $attributes['type'] = 'text';
         }
 
-        $attributes['name'] = $attributes['name'] ?? $field_name;
-        $attributes['value'] = $attributes['value'] ?? $field_value;
+        $attributes['name'] ??= $field_name;
+        $attributes['value'] ??= $field_value;
 
         return self::elementWithErrors('input', null, $attributes, isset($errors[$field_name]));
     }
@@ -55,14 +51,14 @@ class Form
 
     public static function textarea(string $field_name, mixed $field_value = null, array $attributes = [], array $errors = []): string
     {
-        $attributes['name'] = $attributes['name'] ?? $field_name;
+        $attributes['name'] ??= $field_name;
         return self::elementWithErrors('textarea', $field_value, $attributes, isset($errors[$field_name]));
     }
 
 
     public static function select(string $field_name, array $option_list, mixed $selected = null, array $attributes = [], array $errors = []): string
     {
-        $attributes['name'] = $attributes['name'] ?? $field_name;
+        $attributes['name'] ??= $field_name;
 
         $options = '';
         foreach ($option_list as $value => $label) {
@@ -73,6 +69,7 @@ class Form
 
             $options .= new Element('option', $label, $option_attributes);
         }
+
         return self::elementWithErrors('select', $options, $attributes, isset($errors[$field_name]));
     }
 
@@ -97,8 +94,8 @@ class Form
         $attributes['type'] = 'submit';
         unset($attributes['name']);
 
-        $attributes['id'] = $attributes['id'] ?? $field_id;
-        $attributes['value'] = $attributes['value'] ?? $field_label;
+        $attributes['id'] ??= $field_id;
+        $attributes['value'] ??= $field_label;
 
         if (isset($attributes['tag']) && $attributes['tag'] === 'input') {
             unset($attributes['tag']);
@@ -115,10 +112,10 @@ class Form
 
     private static function elementWithErrors(string $tag, string $content = null, array $attributes = [], bool $hasErrors = false): string
     {
-        $attributes['id'] = $attributes['id'] ?? $attributes['name'] ?? '';
+        $attributes['id'] ??= $attributes['name'] ?? '';
 
-        if ($hasErrors === true) {
-            $attributes['class'] = $attributes['class'] ?? '';
+        if ($hasErrors) {
+            $attributes['class'] ??= '';
             $attributes['class'] .= ' error';
         }
 
