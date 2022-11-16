@@ -6,10 +6,13 @@ use \HexMakina\Marker\Element;
 
 final class ElementTest extends TestCase
 {
-  private $tags;
-  private $tags_void;
+  /**
+   * @var string[]
+   */
+  private array $tags = [];
 
-  public function setUp(): void
+
+  protected function setUp(): void
   {
     // https://html.spec.whatwg.org/multipage/indices.html#elements-3
     $this->tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'slot', 'small', 'source', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'SVG svg', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr'];
@@ -31,7 +34,7 @@ final class ElementTest extends TestCase
         $this->assertEquals('<'.$tag.'/>', $e->__toString());
       }
       else {
-        $this->assertEquals("<$tag></$tag>", $e->__toString());
+        $this->assertEquals(sprintf('<%s></%s>', $tag, $tag), $e->__toString());
       }
     }
   }
@@ -49,7 +52,7 @@ final class ElementTest extends TestCase
           $this->assertEquals('<'.$tag.'/>', $e->__toString());
         }
         else {
-          $this->assertEquals("<$tag>$expected</$tag>", $e->__toString());
+          $this->assertEquals(sprintf('<%s>%s</%s>', $tag, $expected, $tag), $e->__toString());
         }
       }
     }
@@ -107,7 +110,10 @@ final class ElementTest extends TestCase
   }
 
 
-  private function assertForAllHTMLTags($message, $attributes, $attributes_expected_string)
+  /**
+   * @param mixed[] $attributes
+   */
+  private function assertForAllHTMLTags(string $message, array $attributes, string $attributes_expected_string): void
   {
     foreach($this->tags as $tag){
 

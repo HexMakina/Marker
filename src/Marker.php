@@ -253,18 +253,37 @@ namespace HexMakina\Marker;
 
 class Marker
 {
-    //::span('inner text', $attributes)
-
-
-    public static function __callStatic(string $element_type, array $arguments): Element
+    //::span('inner text', ['class' => 'd-block'])
+    public static function __callStatic(string $tag, array $arguments): Element
     {
-        $i = 0;
-        // first argument is the inner text
-        $element_inner = $arguments[$i++] ?? null;
-        // second argument, an array for HTML attributes
-        $attributes = $arguments[$i++] ?? [];
+        return Element::$tag($arguments);
+    }
 
-        return new Element($element_type, $element_inner, $attributes);
+    /**
+      * ? makes more sense to write
+      * Marker::img('path/to/img.jpg', 'An alternative text', ['width' => 34, 'height' => 34])
+      * than
+      * Marker::img(null, ['src' => 'path/to/img.jpg', 'alt' => 'An alternative text', 'width' => 34, 'height' => 34])
+      */
+    public static function img(string $src, string $alt, array $attributes = []): Element
+    {
+        $attributes['src'] ??= $src;
+        $attributes['alt'] ??= $alt;
+        $attributes['title'] ??= $alt;
+
+        return new Element('img', null, $attributes);
+    }
+    /**
+      * ? makes more sense to write
+      * Marker::a('controller/task/id', 'Click here', ['class' => 'nav'])
+      * than
+      * Marker::a('Click here', ['href' => controller/task/id', 'class' => 'nav'])
+      */
+    public static function a(string $href, string $label, array $attributes = []): Element
+    {
+        $attributes['href'] ??= $href;
+
+        return new Element('a', $label, $attributes);
     }
 
     // TODO labels should mandatory, accessibility
@@ -275,7 +294,6 @@ class Marker
         $attributes['class'] = sprintf('fas fa-%s %s', $icon, $attributes['class'] ?? '');
         return new Element('i', '', $attributes);
     }
-
 
     public static function checkbutton(string $field_name, mixed $field_value, string $field_label, array $attributes = []): Element
     {
@@ -300,20 +318,5 @@ class Marker
             ),
             ['class' => 'checkbutton']
         );
-    }
-
-
-    public static function img(string $src, string $title, array $attributes = []): Element
-    {
-        $attributes['src'] ??= $src;
-        $attributes['title'] ??= $title;
-        return new Element('img', null, $attributes);
-    }
-
-
-    public static function a(string $href, string $label, array $attributes = []): Element
-    {
-        $attributes['href'] ??= $href;
-        return new Element('a', $label, $attributes);
     }
 }

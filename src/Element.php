@@ -36,6 +36,25 @@ class Element
 
 
     /**
+     * ::span('inner text', ['class' => 'd-block'])
+     * ::p('lorem ipsum')
+     * ::img('alternative text', ['src' => 'path/to/img', 'width' => 100, 'height'=>100])
+     * ::a('click here', ['href' => 'url/to/destination', 'class' => 'nav-link'])
+     * ::a('anchor title', ['name' => 'anchor_name'])
+     *
+     * @param mixed[] $arguments
+     */
+    public static function __callStatic(string $tag, array $arguments): Element
+    {
+        // first argument is the inner text
+        $inner_text = $arguments[0] ?? null;
+        // second argument, an array for HTML attributes
+        $attributes = $arguments[1] ?? [];
+
+        return new Element($tag, $inner_text, $attributes);
+    }
+
+    /**
      * @param mixed[] $attributes
      */
     public function __construct(string $tag, string $content = null, array $attributes = [])
@@ -45,28 +64,25 @@ class Element
         $this->attributes = $attributes;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        $ret = '';
         $attributes = self::attributesAsString($this->attributes);
 
         if ($this->isVoid()) {
-            $ret = sprintf(
+            return sprintf(
                 self::FORMAT_VOID,
                 $this->tag,
                 $attributes,
             );
-        } else {
-            $ret = sprintf(
-                self::FORMAT_ELEMENT,
-                $this->tag,
-                $attributes,
-                $this->content,
-                $this->tag
-            );
         }
 
-        return $ret;
+        return sprintf(
+            self::FORMAT_ELEMENT,
+            $this->tag,
+            $attributes,
+            $this->content,
+            $this->tag
+        );
     }
 
     public function isVoid(): bool
