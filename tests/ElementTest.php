@@ -23,6 +23,7 @@ final class ElementTest extends TestCase
     public function testEmptyConstructor(): void
     {
         $this->expectException(\ArgumentCountError::class);
+        /** @scrutinizer ignore-call */
         new Element();
     }
 
