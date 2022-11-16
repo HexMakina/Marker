@@ -25,12 +25,31 @@ final class ElementTest extends TestCase
       new Element();
   }
 
+  public function testStaticCall() : void
+  {
+    foreach($this->tags as $tag)
+    {
+        $e = new Element($tag);
+        $e_static = Element::$tag();
+        $this->assertEquals("$e", "$e_static");
+    }
+  }
+
+  public function testIsVoid(): void
+  {
+    foreach($this->tags as $tag)
+    {
+      $e = new Element($tag);
+      $this->assertEquals($e->isVoid(), in_array($tag, Element::VOID_ELEMENTS));
+    }
+  }
+
   public function testCreateEmptyElement(): void
   {
     foreach($this->tags as $tag)
     {
       $e = new Element($tag);
-      if(in_array($tag, Element::VOID_ELEMENTS)){
+      if($e->isVoid()){
         $this->assertEquals('<'.$tag.'/>', $e->__toString());
       }
       else {
@@ -39,22 +58,27 @@ final class ElementTest extends TestCase
     }
   }
 
-
   public function testCreateElementWithContent(): void
   {
-    $messages = ['lorem ipsum' => 'lorem ipsum', '' => '', null => ''];
-    foreach($messages as $message => $expected){
-      foreach($this->tags as $tag)
-      {
-        $e = new Element($tag, $message);
+    $messages = [
+        'lorem ipsum' => 'lorem ipsum',
+        '' => '',
+        null => ''
+    ];
+    
+    foreach($messages as $message => $expected)
+    {
+        foreach($this->tags as $tag)
+        {
+            $e = new Element($tag, $message);
 
-        if(in_array($tag, Element::VOID_ELEMENTS)){
-          $this->assertEquals('<'.$tag.'/>', $e->__toString());
+            if($e->isVoid()){
+              $this->assertEquals('<'.$tag.'/>', $e->__toString());
+            }
+            else {
+              $this->assertEquals(sprintf('<%s>%s</%s>', $tag, $expected, $tag), $e->__toString());
+            }
         }
-        else {
-          $this->assertEquals(sprintf('<%s>%s</%s>', $tag, $expected, $tag), $e->__toString());
-        }
-      }
     }
   }
 
