@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
   * HTML generator
@@ -250,6 +249,8 @@ declare(strict_types=1);
  *                 creates a possible line-break
   */
 
+declare(strict_types=1);
+
 namespace HexMakina\Marker;
 
 class Marker
@@ -296,10 +297,10 @@ class Marker
         return new Element('i', '', $attributes);
     }
 
-    public static function checkbutton(string $field_name, mixed $field_value, string $field_label, array $attributes = []): Element
+    public static function checkbutton(string $name, mixed $value, string $label, array $attributes = []): Element
     {
         if (!isset($attributes['id'])) {
-            $attributes['id'] = $field_name;
+            $attributes['id'] = $name;
         }
 
         if (!isset($attributes['type'])) {
@@ -314,7 +315,7 @@ class Marker
         return
         Marker::div(
             Marker::label(
-                Form::input($field_name, $field_value, $attributes) . Marker::span($field_label),
+                Form::input($name, $value, $attributes) . Marker::span($label),
                 ['for' => $attributes['id']]
             ),
             ['class' => 'checkbutton']

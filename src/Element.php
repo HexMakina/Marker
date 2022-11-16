@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace HexMakina\Marker;
@@ -43,16 +44,15 @@ class Element
      * ::a('click here', ['href' => 'url/to/destination', 'class' => 'nav-link'])
      * ::a('anchor title', ['name' => 'anchor_name'])
      *
-     * @param mixed[] $arguments
      */
     public static function __callStatic(string $tag, array $arguments): Element
     {
         // first argument is the inner text
-        $inner_text = $arguments[0] ?? null;
+        $content = $arguments[0] ?? null;
         // second argument, an array for HTML attributes
         $attributes = $arguments[1] ?? [];
 
-        return new Element($tag, $inner_text, $attributes);
+        return new Element($tag, $content, $attributes);
     }
 
     /**
