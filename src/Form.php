@@ -34,7 +34,7 @@ class Form
         return self::input($name, $value, $attributes, $errors);
     }
 
-    public static function input(string $name, mixed $value = null, array $attributes = [], array $errors = []): string
+    public static function input(string $name = null, mixed $value = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
