@@ -35,7 +35,7 @@ class Form
         return self::input($name, $value, $attributes, $errors);
     }
 
-    public static function input(string $name = null, mixed $value = null, array $attributes = [], array $errors = []): string
+    public static function input(string $name = null, $value = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
@@ -53,20 +53,20 @@ class Form
         return self::elementWithErrors('input', null, $attributes, isset($errors[$name]));
     }
 
-    public static function textarea(string $name, mixed $value = null, array $attributes = [], array $errors = []): string
+    public static function textarea(string $name, $value = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] ??= $name;
         return self::elementWithErrors('textarea', $value, $attributes, isset($errors[$name]));
     }
 
-    public static function select(string $name, array $option_list, mixed $selected = null, array $attributes = [], array $errors = []): string
+    public static function select(string $name, array $option_list, $selected = null, array $attributes = [], array $errors = []): string
     {
         $attributes['name'] ??= $name;
         $options = self::options($option_list, $selected);
         return self::elementWithErrors('select', $options, $attributes, isset($errors[$name]));
     }
 
-    public static function options(array $list, mixed $selected = null): string
+    public static function options(array $list, $selected = null): string
     {
         $options = '';
         foreach ($list as $value => $label) {
@@ -75,7 +75,7 @@ class Form
                 $option_attributes['selected'] =  'selected';
             }
 
-            $options .= new Element('option', $label, $option_attributes);
+            $options .= new Element('option', "$label", $option_attributes);
         }
 
         return $options;
