@@ -15,12 +15,11 @@ class Form
 {
     public static function __callStatic(string $element_type, array $arguments): string
     {
-      // arguments [name, value, [attributes], [errors]]
+      // arguments [name, value, [attributes]]
         $i = 0;
         $name         = $arguments[$i++] ?? null;
         $value        = $arguments[$i++] ?? null;
         $attributes   = (array)($arguments[$i++] ?? []);
-        $errors       = (array)($arguments[$i++] ?? []);
 
         $attributes['type'] = $element_type;
         $attributes['name'] ??= $name;
@@ -32,10 +31,10 @@ class Form
             $attributes['value'] = '';
         }
 
-        return self::input($name, $value, $attributes, $errors);
+        return self::input($name, $value, $attributes);
     }
 
-    public static function input(string $name = null, $value = null, array $attributes = [], array $errors = []): string
+    public static function input(string $name = null, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
@@ -50,20 +49,20 @@ class Form
             $attributes['type'] = 'text';
         }
 
-        return self::elementWithErrors('input', null, $attributes, isset($errors[$name]));
+        return self::labelledField('input', null, $attributes);
     }
 
-    public static function textarea(string $name, $value = null, array $attributes = [], array $errors = []): string
+    public static function textarea(string $name, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
-        return self::elementWithErrors('textarea', $value, $attributes, isset($errors[$name]));
+        return self::labelledField('textarea', $value, $attributes);
     }
 
-    public static function select(string $name, array $option_list, $selected = null, array $attributes = [], array $errors = []): string
+    public static function select(string $name, array $option_list, $selected = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
         $options = self::options($option_list, $selected);
-        return self::elementWithErrors('select', $options, $attributes, isset($errors[$name]));
+        return self::labelledField('select', $options, $attributes);
     }
 
     public static function options(array $list, $selected = null): string
@@ -86,14 +85,13 @@ class Form
         return '' . (new Element('legend', $label, $attributes));
     }
 
-    public static function label(string $for, string $label, array $attributes = [], array $errors = []): string
+    public static function label(string $for, string $label, array $attributes = []): string
     {
         $attributes['for'] = $for;
         unset($attributes['label']);
 
-        return self::elementWithErrors('label', $label, $attributes, isset($errors[$for]));
+        return self::labelledField('label', $label, $attributes);
     }
-
 
     public static function submit(string $id, string $label, array $attributes = []): string
     {
@@ -117,18 +115,13 @@ class Form
         return $ret;
     }
 
-    private static function elementWithErrors(string $tag, string $content = null, array $attributes = [], bool $hasErrors = false): string
+    private static function labelledField(string $tag, string $content = null, array $attributes = []): string
     {
         $attributes['id'] ??= $attributes['name'] ?? '';
 
-        if ($hasErrors) {
-            $attributes['class'] ??= '';
-            $attributes['class'] .= ' error';
-        }
-
         $label = '';
         if (isset($attributes['label'])) {
-            $label = self::label($attributes['id'], $attributes['label'], [], ['' . $attributes['id'] => 'error']);
+            $label = self::label($attributes['id'], $attributes['label']);
             unset($attributes['label']);
         }
 

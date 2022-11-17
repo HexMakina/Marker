@@ -31,6 +31,7 @@ class Marker
 
         return new Element('img', null, $attributes);
     }
+
     /**
       * ? makes more sense to write
       * Marker::a('controller/task/id', 'Click here', ['class' => 'nav'])
