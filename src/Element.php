@@ -360,6 +360,6 @@ class Element
 
     private static function isValidValue($v): bool
     {
-        return !is_null($v) && $v != '' && !is_array($v);
+        return !is_null($v) && $v !== '' && !is_array($v);
     }
 }
