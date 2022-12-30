@@ -9,13 +9,8 @@ declare(strict_types=1);
 
 namespace HexMakina\Marker;
 
-class Marker
+class Marker extends Element
 {
-    //::span('inner text', ['class' => 'd-block'])
-    public static function __callStatic(string $tag, array $arguments): Element
-    {
-        return Element::$tag($arguments);
-    }
 
     /**
       * ? makes more sense to write
