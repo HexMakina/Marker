@@ -1,7 +1,13 @@
 <?php
 /**
-  * HTML generator
-  * Element, as in HTML element
+  * Simple and useful implementation for generating HTML elements in PHP
+  * The use of constants and magic methods make it easy to extend and maintain. 
+  * The strict typing and use of namespaces also demonstrate good coding practices.
+  * This code defines a PHP class called "Element" that represents an HTML element. 
+  * It includes several constants, such as a list of void elements and format strings for generating HTML code. 
+  * The class also includes a constructor and a magic __callStatic() method that allows for creating new Element objects with a simple syntax.
+  * The __toString() method of the Element class generates the HTML code for the element based on its tag, attributes, and content. 
+  * The isVoid() method determines if the element is a void element, which has no closing tag.
   */
 
 /**
