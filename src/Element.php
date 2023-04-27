@@ -305,10 +305,14 @@ class Element
     {
         // first argument is the inner text
         $content = $arguments[0] ?? null;
+        
         // second argument, an array for HTML attributes
         $attributes = $arguments[1] ?? [];
 
-        return new Element($tag, $content, $attributes);
+        if(is_string($content))
+            return new Element($tag, $content, $attributes);
+
+        throw new InvalidArgumentException('missing content or content not a string');
     }
 
     /**
