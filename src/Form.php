@@ -145,6 +145,11 @@ class Form
         return self::labelledField('label', $label, $attributes);
     }
 
+    public static function button(string $label, array $attributes = []): string
+    {
+        return  '' . (new Element('button', $label, $attributes));
+    }
+
     /**
      * Generates a submit button element for a form.
      * 
@@ -172,7 +177,7 @@ class Form
         } else {
             unset($attributes['tag']);
             unset($attributes['value']);
-            $ret .= new Element('button', $label, $attributes);
+            $ret .= self::button($label, $attributes);
         }
 
         return $ret;
