@@ -11,7 +11,6 @@ namespace HexMakina\Marker;
 
 class Marker extends Element
 {
-
     /**
       * ? makes more sense to write
       * Marker::img('path/to/img.jpg', 'An alternative text', ['width' => 34, 'height' => 34])
@@ -40,8 +39,6 @@ class Marker extends Element
         return new Element('a', $label, $attributes);
     }
 
-    // TODO labels should mandatory, accessibility
-    // TODO implement all options of font-awesome
     public static function fas(string $icon, string $title = null, array $attributes = []): Element
     {
         $attributes['title'] ??= $title; // attributes take precedence

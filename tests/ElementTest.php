@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace HexMakina\Marker\tests;
@@ -8,15 +9,15 @@ use HexMakina\Marker\Element;
 
 final class ElementTest extends TestCase
 {
-  /**
-   * @var string[]
-   */
+    /**
+     * @var string[]
+     */
     private array $tags = [];
 
 
     protected function setUp(): void
     {
-      // https://html.spec.whatwg.org/multipage/indices.html#elements-3
+        // https://html.spec.whatwg.org/multipage/indices.html#elements-3
         $this->tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link', 'main', 'map', 'mark', 'menu', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'slot', 'small', 'source', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'SVG svg', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr'];
     }
 
@@ -77,17 +78,17 @@ final class ElementTest extends TestCase
         }
     }
 
-  // Attributes
+    // Attributes
     public function testCreateElementWithAttributes(): void
     {
         $message = 'lorem ipsum';
         $attributes = ['id' => 'test_id'];
         $attributes_expected_string = ' id="test_id"';
 
-      // testing attributes string generator
+        // testing attributes string generator
         $this->assertEquals(Element::attributesAsString($attributes), $attributes_expected_string);
 
-      // testing all HTML tags
+        // testing all HTML tags
         $this->assertForAllHTMLTags($message, $attributes, $attributes_expected_string);
     }
 
@@ -97,10 +98,10 @@ final class ElementTest extends TestCase
         $attributes = ['id' => 'test_id', 'checked', 'class' => 'test_class', 'required'];
         $attributes_expected_string = ' id="test_id" checked class="test_class" required';
 
-      // testing attributes string generator
+        // testing attributes string generator
         $this->assertEquals(Element::attributesAsString($attributes), $attributes_expected_string);
 
-      // testing all HTML tags
+        // testing all HTML tags
         $this->assertForAllHTMLTags($message, $attributes, $attributes_expected_string);
     }
 
@@ -111,31 +112,31 @@ final class ElementTest extends TestCase
         $attributes = ['id' => 'test_id', 'class' => 'test_class', 'style="color:red;"'];
         $attributes_expected_string = ' id="test_id" class="test_class" style="color:red;"';
 
-      // testing attributes string generator
+        // testing attributes string generator
         $this->assertEquals(Element::attributesAsString($attributes), $attributes_expected_string);
 
-      // testing all HTML tags
+        // testing all HTML tags
         $this->assertForAllHTMLTags($message, $attributes, $attributes_expected_string);
 
 
         $attributes = ['class' => 'test_class', 'style="color:red;"','id' => 'test_id'];
         $attributes_expected_string = ' class="test_class" style="color:red;" id="test_id"';
 
-      // testing attributes string generator
+        // testing attributes string generator
         $this->assertEquals(Element::attributesAsString($attributes), $attributes_expected_string);
 
-      // testing all HTML tags
+        // testing all HTML tags
         $this->assertForAllHTMLTags($message, $attributes, $attributes_expected_string);
     }
 
 
-  /**
-   * @param mixed[] $attributes
-   */
+    /**
+     * @param mixed[] $attributes
+     */
     private function assertForAllHTMLTags(string $message, array $attributes, string $attributes_expected_string): void
     {
         foreach ($this->tags as $tag) {
-          // testing by instantiation
+            // testing by instantiation
             $e = new Element($tag, $message, $attributes);
             if (in_array($tag, Element::VOID_ELEMENTS)) {
                 $this->assertEquals(sprintf(Element::FORMAT_VOID, $tag, $attributes_expected_string), $e->__toString());

@@ -5,22 +5,21 @@ declare(strict_types=1);
 namespace HexMakina\Marker;
 
 /**
- * Provides a convenient way to generate form input elements with minimal code, 
+ * Provides a convenient way to generate form input elements with minimal code,
  * making it easier and faster to build forms in PHP.
  */
 
 class Form
 {
-
     /**
      * Used as a shortcut for creating form input elements with a single line of code
-     * 
+     *
      * When called on the Form class with a name that matches an HTML input element type (such as hidden, date, time, radio, datetime, etc.),
      * it intercepts the call and dynamically creates an input element of that type with the provided attributes.
      */
     public static function __callStatic(string $element_type, array $arguments): string
     {
-      // arguments [name, value, [attributes]]
+        // arguments [name, value, [attributes]]
         $i = 0;
         $name         = $arguments[$i++] ?? null;
         $value        = $arguments[$i++] ?? null;
@@ -41,7 +40,7 @@ class Form
 
     /**
      * Generates an HTML input element with the provided attributes.
-     * 
+     *
      * @param string|null $name The name of the input element
      * @param mixed|null $value The value of the input element
      * @param array $attributes An array containing the attributes of the input element
@@ -53,7 +52,7 @@ class Form
         $attributes['value'] ??= $value;
 
         if (
-              !isset($attributes['type'])
+            !isset($attributes['type'])
             || isset($attributes['disabled'])
             || in_array('disabled', $attributes, true)
         ) {
@@ -64,10 +63,10 @@ class Form
 
         return self::labelledField('input', null, $attributes);
     }
-    
+
     /**
      * Generates an HTML textarea element with the provided attributes.
-     * 
+     *
      * @param string $name The name of the textarea element
      * @param mixed|null $value The value of the textarea element
      * @param array $attributes An array containing the attributes of the textarea element
@@ -81,7 +80,7 @@ class Form
 
     /**
      * Generates an HTML select element with the provided options and attributes.
-     * 
+     *
      * @param string $name The name of the select element
      * @param array $option_list An array containing the options of the select element
      * @param mixed|null $selected The selected option of the select element
@@ -97,7 +96,7 @@ class Form
 
     /**
      * Generates an HTML options string for the provided option list and selected value.
-     * 
+     *
      * @param array $list An array containing the options of the select element
      * @param mixed|null $selected The selected option of the select element
      * @return string The generated HTML options string
@@ -119,7 +118,7 @@ class Form
 
     /**
      * Generates an HTML legend element with the provided label and attributes.
-     * 
+     *
      * @param string $label The label of the legend element
      * @param array $attributes An array containing the attributes of the legend element
      * @return string The generated HTML code for the legend element
@@ -131,7 +130,7 @@ class Form
 
     /**
      * Generates an HTML label element with the provided for attribute, label text, and attributes.
-     * 
+     *
      * @param string $for The ID of the input element associated with the label
      * @param string $label The text of the label element
      * @param array $attributes An array containing the attributes of the label element
@@ -152,7 +151,7 @@ class Form
 
     /**
      * Generates a submit button element for a form.
-     * 
+     *
      * @param string $id The ID of the button element.
      * @param string $label The label for the button element.
      * @param array $attributes An optional array of attributes for the button element.
@@ -185,7 +184,7 @@ class Form
 
     /**
      * Generates a labelled HTML form field, combining a form field with a label element.
-     * 
+     *
      * @param string $tag The HTML tag of the form field element
      * @param string|null $content The content of the form field element
      * @param array $attributes Additional attributes to add to the form field element
