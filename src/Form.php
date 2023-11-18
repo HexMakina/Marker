@@ -17,7 +17,7 @@ class Form
      * When called on the Form class with a name that matches an HTML input element type (such as hidden, date, time, radio, datetime, etc.),
      * it intercepts the call and dynamically creates an input element of that type with the provided attributes.
      */
-    public static function __callStatic(string $element_type, array $arguments): string
+    public static function __callStatic(string $input_type, array $arguments): string
     {
         // arguments [name, value, [attributes]]
         $i = 0;
@@ -25,7 +25,7 @@ class Form
         $value        = $arguments[$i++] ?? null;
         $attributes   = (array)($arguments[$i++] ?? []);
 
-        $attributes['type'] = $element_type;
+        $attributes['type'] = $input_type;
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
 
