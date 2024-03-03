@@ -6,11 +6,11 @@ namespace HexMakina\Marker;
 
 /**
  * The Element class provides a simple and useful implementation for creating,  and generating valid HTML elements using PHP
- * The __toString() method of the Element class generates the HTML code for the element based on its tag, attributes, and content
+ * The __toString() method of the Element class generates the HTML code for the element based on its tag, attributes, and inner content
  *
  * Additionally, the Element class provides a static shorthand syntax, using __callStatic() matching the name of the HTML Element to create
  *
- * The first argument is the content, the second are the attributes
+ * The first argument is the inner content and the second, the attributes
  *
  * $abbr = Element::abbr('RTFM', ['title' => 'read the file manual']);
  * $p = Element:p('You reading this means you know about '.$abbr);
@@ -45,17 +45,17 @@ namespace HexMakina\Marker;
  *      'type' => 'checkbox',
  *      'checked',
  *      'disabled',
- *      'class' => 'checkbutton'
+ *      'class' => ['button', 'checkbutton']
  * ]);
  *
- * <input type="checkbox" checked disabled class="checkbutton"/>
+ * <input type="checkbox" checked="checked" disabled="disabled" class="button checkbutton"/>
  *
  */
 
 class Element
 {
     protected string $tag;
-    protected ?string $content;
+    protected ?string $inner;
     protected array $attributes = [];
 
     // shorthand syntax for creating elements
@@ -66,22 +66,21 @@ class Element
 
     /**
      * Creates a new Element instance.
-     *
-     * @param string $tag The HTML tag for the element.
-     * @param string|null $content The content of the element (optional).
+     * A null $inner means that the HTML element is a void element, ie br, hr, img, etc.
+     * 
+     * @param string $tag HTML tag, ie span, div, p, etc.
+     * @param string|null $inner what will be inside the tag (null means void element)
      * @param mixed[] $attributes An array of attributes for the element (optional).
      * 
      */
-    public function __construct(string $tag, string $content = null, array $attributes = [])
+    public function __construct(string $tag, string $inner = null, array $attributes = [])
     {
         $this->tag = $tag;
-        $this->content = $content;
-
+        $this->inner = $inner;
         foreach ($attributes as $name => $value) {
-            if(is_int($name)) {
+            if (is_int($name)) {
                 $name = $value;
             }
-
             $this->$name = $value;
         }
     }
@@ -89,41 +88,67 @@ class Element
     /**
      * Magic method to set element attributes.
      *
+     * If the value is null, empty string or empty array, the attribute is removed.
      * If the value is an array, it is imploded using a space character.
-     * If the value is null or empty, the attribute is removed.
-     * If the attribute name equals it's value, the attribute is treated as
-     * a boolean attribute (checked, disabled, etc.) and not formatted
-     *
+     * 
      * @param string $name The name of the attribute.
      * @param mixed $value The value of the attribute.
      * @return void
      */
-    public function __set(string $name, $value)
+    public function __set(string $name, $value = null)
     {
-        if (is_array($value)) {
-            $value = implode(' ', $value);
+        // for class="class1 class2" syntax
+        if (is_array($value)) 
+        {
+            // sets value to null to trigger unset() later
+            $value = empty($value) ? null : implode(' ', $value);
         }
 
-        if ($value === null || $value === '') {
+        // remove empty attributes
+        if ($value === null || $value === '') 
+        {
             unset($this->attributes[$name]);
-        } else {
-            $this->attributes[$name] = ($name === $value) ? $value : sprintf('%s="%s"', $name, $value);
+        } 
+        else 
+        {
+            $this->attributes[$name] = $value;
         }
     }
 
     /**
-     * This method returns the string representation of the Element object by formatting the tag, attributes, and content
+     * Magic method to get the value of an attribute.
+     *
+     * @param string $name The name of the attribute.
+     * @return string|null The value of the attribute, or null if it doesn't exist.
+     */
+
+    public function __get(string $name)
+    {
+        return $this->attributes[$name] ?? '';
+    }
+
+    /**
+     * This method returns the string representation of the Element object by formatting the tag, attributes, and inner
      * of the element based on whether it is a void element or not. If the element is a void element, it returns the tag and
-     * attributes only. Otherwise, it returns the tag, attributes, content, and closing tag.
+     * attributes only. Otherwise, it returns the tag, attributes, inner, and closing tag.
      *
      * @return string The string representation of the Element object.
      */
     public function __toString(): string
     {
-        $attributes = empty($this->attributes) ? '' : ' '.implode(' ', $this->attributes);
+        $attributes = '';
 
-        return is_null($this->content)
+        if(!empty($this->attributes))
+        {
+            $attributes = array_walk($this->attributes, function(&$value, $key){
+                $value = sprintf('%s="%s"', $key, $value);
+            });
+
+            $attributes = ' ' . implode(' ', $this->attributes);
+        }
+
+        return is_null($this->inner)
             ? sprintf('<%s%s/>', $this->tag, $attributes)
-            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, $this->content, $this->tag);
+            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, $this->inner, $this->tag);
     }
 }
