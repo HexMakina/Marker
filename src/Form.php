@@ -75,7 +75,7 @@ class Form
     public static function textarea(string $name, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
-        return self::labelledField('textarea', $value, $attributes);
+        return self::labelledField('textarea', $value ?? '', $attributes);
     }
 
     /**
@@ -199,6 +199,7 @@ class Form
             $label = self::label($attributes['id'], $attributes['label']);
             unset($attributes['label']);
         }
+        
 
         return $label . (new Element($tag, $content, $attributes));
     }
