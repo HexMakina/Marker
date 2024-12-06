@@ -192,15 +192,24 @@ class Form
      */
     private static function labelledField(string $tag, string $content = null, array $attributes = []): string
     {
+        $ret = '';
+        
         $attributes['id'] ??= $attributes['name'] ?? '';
 
-        $label = '';
-        if (isset($attributes['label'])) {
-            $label = self::label($attributes['id'], $attributes['label']);
-            unset($attributes['label']);
-        }
-        
+        $label_text = $attributes['label'] ?? '';
+        unset($attributes['label']);
+= 
+        $input = new Element($tag, $content, $attributes);
 
-        return $label . (new Element($tag, $content, $attributes));
+        if($label_text){
+            if (!empty($attributes['label-wrap']))
+                $ret = self::label(null, $label_text.$input);
+            else
+                $ret = self::label($attributes['id'], $label_text).$input;
+        }
+        else
+            $ret = $input;
+
+        return $ret;
     }
 }
