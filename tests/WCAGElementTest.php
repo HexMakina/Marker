@@ -192,4 +192,67 @@ class WCAGElementTest extends TestCase
         $this->assertStringEndsWith('/>', $result);
     }
 
+    public function testAudio()
+    {
+        $result = (string)WCAGElement::audio('audio.mp3', ['controls' => 'controls', 'class' => 'audio-class']);
+        $this->assertStringStartsWith('<audio', $result);
+        $this->assertStringContainsString('src="audio.mp3"', $result);
+        $this->assertStringContainsString('controls="controls"', $result);
+        $this->assertStringContainsString('class="audio-class"', $result);
+        $this->assertStringEndsWith('/>', $result);
+
+        $result = WCAGElement::audio('audio.mp3', ['controls' => '']);
+        $this->assertStringContainsString('controls=""', $result);
+    }
+
+    public function testAudioWithoutSrc()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Source attribute is required");
+
+        WCAGElement::audio('', []);
+    }
+
+    public function testVideo()
+    {
+        $result = (string)WCAGElement::video('video.mp4', ['class' => 'video-class']);
+        $this->assertStringStartsWith('<video', $result);
+        $this->assertStringContainsString('src="video.mp4"', $result);
+        $this->assertStringContainsString('controls="controls"', $result);
+        $this->assertStringContainsString('class="video-class"', $result);
+        $this->assertStringEndsWith('/>', $result);
+    }
+
+    public function testVideoWithoutSrc()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Source attribute is required");
+
+        WCAGElement::video('', []);
+    }
+
+    public function testHTML()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Language attribute is required");
+        $result = (string)WCAGElement::html('html content');
+
+        $result = (string)WCAGElement::html('html content', ['lang' => 'en']);
+        $this->assertStringContainsString('lang="en"', $result);
+
+    }
+
+    public function testTh()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Scope attribute is required");
+        $result = (string)WCAGElement::th('', 'Header');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Header content is required");
+        $result = (string)WCAGElement::th('col', '');
+
+        $result = (string)WCAGElement::th('col', 'Header');
+        $this->assertStringContainsString('scope="col"', $result);
+    }
 }
