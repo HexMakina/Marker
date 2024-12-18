@@ -20,12 +20,21 @@ class WCAGElementTest extends TestCase
         $this->assertStringEndsWith('/>', $result);
     }
 
-    public function testImgWithoutAlt()
+    public function testImgWithEmptyAlt()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("The 'alt' attribute is required for <img>.");
+        $expected = '<img src="image.jpg" alt=""/>';
 
-        WCAGElement::img('image.jpg', '');
+        $img = WCAGElement::img('image.jpg');
+        $this->assertEquals($expected, (string)$img);
+
+        $img = WCAGElement::img('image.jpg', '');
+        $this->assertEquals($expected, (string)$img);
+
+        $img = WCAGElement::img('image.jpg', false);
+        $this->assertEquals($expected, (string)$img);
+
+        $img = WCAGElement::img('image.jpg', 0);
+        $this->assertEquals('<img src="image.jpg" alt="0"/>', (string)$img);
     }
 
     public function testFigureWithCaption()
@@ -34,7 +43,7 @@ class WCAGElementTest extends TestCase
         $caption = 'This is a caption';
         $attributes = ['class' => 'figure-class'];
 
-        $result = WCAGElement::figure($content, $caption, $attributes);
+        $result = (string)WCAGElement::figure($content, $caption, $attributes);
 
         $this->assertStringContainsString('<figcaption>This is a caption</figcaption>', $result);
         $this->assertStringContainsString('class="figure-class"', $result);
@@ -57,6 +66,7 @@ class WCAGElementTest extends TestCase
 
         $this->assertStringContainsString('Click me', $result);
         $this->assertStringContainsString('class="btn-class"', $result);
+        $this->assertStringContainsString('role="button"', $result);
     }
 
     public function testButtonWithoutContent()
