@@ -76,4 +76,120 @@ class WCAGElementTest extends TestCase
 
         WCAGElement::button('');
     }
+
+    public function testButtonWithRole()
+    {
+        $result = WCAGElement::button('Click me', ['role' => 'submit']);
+        $this->assertStringContainsString('role="submit"', $result);
+    }
+
+    public function testInput()
+    {
+        $result = WCAGElement::input('text', 'name', ['class' => 'input-class', 'value' => '1']);
+        $this->assertStringStartsWith('<input', $result);
+        $this->assertStringContainsString('type="text"', $result);
+        $this->assertStringContainsString('name="name"', $result);
+        $this->assertStringContainsString('value="1"', $result);
+        $this->assertStringContainsString('class="input-class"', $result);
+        $this->assertStringEndsWith('/>', $result);
+    }
+
+    public function testInputWithoutType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Input type is required");
+
+        WCAGElement::input('', 'name');
+    }
+
+    public function testInputWithoutName()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Input name is required");
+
+        WCAGElement::input('text', '');
+    }
+
+    public function testInputWithRequired()
+    {
+        $result = WCAGElement::input('text', 'name', ['required' => 'required']);
+        $this->assertStringContainsString('required', $result);
+        $this->assertStringContainsString('aria-required="true"', $result);
+
+        $result = WCAGElement::input('text', 'name', ['required']);
+        $this->assertStringContainsString('required', $result);
+        $this->assertStringContainsString('aria-required="true"', $result);
+
+        $result = WCAGElement::input('text', 'name', ['required' => '']);
+        $this->assertStringContainsString('required', $result);
+        $this->assertStringNotContainsString('aria-required="true"', $result);
+    }
+
+    public function testAWithHref()
+    {
+        $content = 'Click me';
+        $href = 'https://example.com';
+        $attributes = ['class' => 'link-class'];
+
+        $result = WCAGElement::a($href, $content, $attributes);
+        $this->assertStringStartsWith('<a', $result);
+        $this->assertStringContainsString('href="https://example.com"', $result);
+        $this->assertStringContainsString('class="link-class"', $result);
+        $this->assertStringContainsString('Click me', $result);
+        $this->assertStringEndsWith('</a>', $result);
+    }
+
+    public function testAWithoutHref()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Anchor href is required");
+
+        WCAGElement::a('', 'Click me');
+    }
+
+    public function testArea()
+    {
+        $result = WCAGElement::area('An area', ['shape' => 'rect', 'coords' => '34,44,270,350']);
+        $this->assertStringStartsWith('<area', $result);
+        $this->assertStringContainsString('alt="An area"', $result);
+        $this->assertStringContainsString('shape="rect"', $result);
+        $this->assertStringContainsString('coords="34,44,270,350"', $result);
+        $this->assertStringEndsWith('/>', $result);
+    }
+
+    public function testAreaWithoutAlt()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Area alt is required");
+
+        WCAGElement::area('', ['shape' => 'rect', 'coords' => '34,44,270,350']);
+    }
+
+    public function testSelect()
+    {
+        $result = WCAGElement::select('name', [], ['class' => 'select-class']);
+        $this->assertStringStartsWith('<select', $result);
+        $this->assertStringContainsString('name="name"', $result);
+        $this->assertStringContainsString('class="select-class"', $result);
+        $this->assertStringEndsWith('</select>', $result);
+    }
+
+    public function testSelectWithoutName()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Select name is required");
+
+        WCAGElement::select('', []);
+    }
+
+    public function testIframe()
+    {
+        $result = (string)WCAGElement::iframe('https://example.com', 'title-test', ['class' => 'iframe-class']);
+        $this->assertStringStartsWith('<iframe', $result);
+        $this->assertStringContainsString('src="https://example.com"', $result);
+        $this->assertStringContainsString('class="iframe-class"', $result);
+        $this->assertStringContainsString('title="title-test"', $result);
+        $this->assertStringEndsWith('/>', $result);
+    }
+
 }
