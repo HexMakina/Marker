@@ -23,21 +23,19 @@ class WCAGElement extends Element
 {
     /**
      * Enforce 'alt' attribute for <img> tags.
+     * WCAG 2.1 Level A: 1.1.1 Non-text Content
+     * - Describes the image for screen readers.
+     * - Must be empty (alt="") if the image is decorative.
      * 
      * @param string $src Image source
-     * @param string $alt Alternative text (required)
+     * @param string $alt Alternative text (required, leave empty for decorative images
      * @param array  $attributes Additional attributes
      * @return string
      */
-    public static function img(string $src, string $alt, $attributes = [])
+    public static function img(string $src, string $alt='', $attributes = [])
     {
-        if (empty($alt)) {
-            throw new \InvalidArgumentException("The 'alt' attribute is required for <img>.");
-        }
-
         $attributes['src'] = $src;
         $attributes['alt'] = $alt;
-
         return parent::img(null, $attributes);
     }
 
@@ -56,7 +54,7 @@ class WCAGElement extends Element
         }
 
         $content .= parent::figcaption($caption);
-
+        $attributes['role'] = 'figure';
         return parent::figure($content, $attributes, function ($value) {
             return $value;
         });
@@ -73,8 +71,9 @@ class WCAGElement extends Element
     {
         if (empty($content)) {
             throw new \InvalidArgumentException("Button content is required.");
+            
         }
-
+        $attributes['role'] ??= 'button';
         return parent::button($content, $attributes);
     }
 }
