@@ -63,4 +63,14 @@ final class ElementTest extends TestCase
             $element->__toString()
         );
     }
+
+    public function testCanHaveMultipleAttributes(): void
+    {
+        $element = new Element('div', 'Hello, World!', ['class' => ['foo', 'bar'], 'id' => 'test']);
+
+        $this->assertEquals(
+            '<div class="foo bar" id="test">Hello, World!</div>',
+            $element->__toString()
+        );
+    }
 }
