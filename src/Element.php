@@ -9,33 +9,52 @@ class Element
     protected string $tag;
     protected ?string $inner;
     protected array $attributes = [];
-    protected $formatter;
+    protected $formatter = null;
 
-    public const FORMAT_TAG_VOID = '<%s%s/>';
-    public const FORMAT_TAG = '<%s%s>%s</%s>';
-    public const FORMAT_ATTRIBUTE = ' %s="%s"';
-
+    // magic method to create an instance of Element statically
     public static function __callStatic(string $tag, array $arguments): self
     {
         return new self($tag, $arguments[0] ?? null, $arguments[1] ?? [], $arguments[2] ?? null);
     }
 
+    /**
+     * Element constructor.
+     * 
+     * The attributes array can contain:
+     *  - boolean attributes ['checked', 'selected', 'disabled'], which are set to their name
+     *  - string attributes ['id' => 'foo', 'name' => 'bar', 'class' => "foo bar"]
+     *  - a mix of both ['id' => 'foo', 'checked', 'class' => "foo bar"]
+     * 
+     * If not provided, the default $formatter uses htmlspecialchars with ENT_QUOTES
+     * 
+     * @param string $tag HTML tag name
+     * @param string $inner inner HTML content
+     * @param array $attributes HTML attributes
+     * @param callable $formatter function to format attribute values and inner content
+     */
     public function __construct(string $tag, string $inner = null, array $attributes = [], callable $formatter = null)
     {
         $this->tag = $tag;
         $this->inner = $inner;
+        foreach($attributes as $name => $value)
+        {
+            // is boolean attribute ?
+            if(is_int($name))
+            {
+                $this->$value = true;
+            }
+            else
+            {
+                $this->$name = $value;
+            }
+        }
+
         $this->formatter = $formatter ?? function($value){
             return htmlspecialchars($value, ENT_QUOTES);
         };
-
-        foreach ($attributes as $name => $value) {
-            if (is_int($name)) {
-                $name = $value;
-            }
-            $this->$name = $value;
-        }
     }
 
+    // magic methods to set, get, check and unset attributes
     public function __set(string $name, $value = null)
     {
         $this->attributes[$name] = is_array($value) ? implode(' ', $value) : $value;
@@ -56,16 +75,18 @@ class Element
         unset($this->attributes[$name]);
     }
 
+    // magic method to render the HTML element
     public function __toString(): string
     {
         $attributes = '';
+        
         foreach ($this->attributes as $name => $value) {
-            $value = call_user_func($this->formatter, $value);
-            $attributes .= sprintf(self::FORMAT_ATTRIBUTE, $name, $value);
+            $name = call_user_func($this->formatter, $name);
+            $attributes .= ' ' . ($value === true ? $name : sprintf('%s="%s"', $name, call_user_func($this->formatter, (string)$value)));
         }
 
         return $this->inner === null
-            ? sprintf(self::FORMAT_TAG_VOID, $this->tag, $attributes)
-            : sprintf(self::FORMAT_TAG, $this->tag, $attributes, call_user_func($this->formatter, $this->inner), $this->tag);
+            ? sprintf('<%s%s/>', $this->tag, $attributes)
+            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, call_user_func($this->formatter, $this->inner), $this->tag);
     }
 }
