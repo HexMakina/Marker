@@ -44,6 +44,37 @@ final class ElementTest extends TestCase
         );
     }
 
+    public function testCanHaveBooleanAttribute(): void
+    {
+        $element = new Element('input', null, ['checked']);
+
+        $this->assertEquals(
+            '<input checked/>',
+            $element->__toString()
+        );
+    }
+
+    public function testCanHaveMixedAttributes(): void
+    {
+        $element = new Element('input', null, ['type' => 'radio', 'name' => 'gaga', 'checked']);
+        $this->assertEquals(
+            '<input type="radio" name="gaga" checked/>',
+            $element->__toString()
+        );
+
+        $element->class = 'test';
+        $this->assertEquals(
+            '<input type="radio" name="gaga" checked class="test"/>',
+            $element->__toString()
+        );
+
+        $element->class = ['foo', 'bar'];
+        $this->assertEquals(
+            '<input type="radio" name="gaga" checked class="foo bar"/>',
+            $element->__toString()
+        );
+    }
+
     public function testCanHaveStringClassAttribute(): void
     {
         $element = new Element('div', 'with class', ['class' => 'test']);
@@ -57,7 +88,6 @@ final class ElementTest extends TestCase
     public function testCanHaveArrayClassAttribute(): void
     {
         $element = new Element('div', 'Hello, World!', ['class' => ['foo', 'bar']]);
-
         $this->assertEquals(
             '<div class="foo bar">Hello, World!</div>',
             $element->__toString()
@@ -76,8 +106,7 @@ final class ElementTest extends TestCase
 
     public function testContentHasSpecialCaracters(): void
     {
-        $element = new Element('div', 'Hello, World! & < > " \' ', ['class' => ['foo',
-            'bar'], 'id' => 'test']);
+        $element = new Element('div', 'Hello, World! & < > " \' ', ['class' => ['foo', 'bar'], 'id' => 'test']);
 
         $this->assertEquals(
             '<div class="foo bar" id="test">Hello, World! &amp; &lt; &gt; &quot; &#039; </div>',
@@ -99,6 +128,5 @@ final class ElementTest extends TestCase
             '<div class="foo bar" id="test" data-attr="Hello, World! &amp; &lt; &gt; &quot; &#039; " data-attr2="Hello, World! &amp; &lt; &gt; &quot; &#039; ">Hello, World! &amp; &lt; &gt; &quot; &#039; </div>',
             $element->__toString()
         );
-
     }
 }
