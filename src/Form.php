@@ -209,6 +209,6 @@ class Form
         else
             $ret = $input;
 
-        return $ret;
+        return (string)$ret;
     }
 }
