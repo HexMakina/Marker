@@ -7,7 +7,7 @@ namespace HexMakina\Marker;
 class Element
 {
     protected string $tag;
-    protected ?string $inner;
+    protected ?string $inner = null;
     protected array $attributes = [];
     protected $formatter = null;
 
@@ -25,7 +25,7 @@ class Element
      *  - string attributes ['id' => 'foo', 'name' => 'bar', 'class' => "foo bar"]
      *  - a mix of both ['id' => 'foo', 'checked', 'class' => "foo bar"]
      * 
-     * If not provided, the default $formatter uses htmlspecialchars with ENT_QUOTES
+     * If not provided, the default callable $formatter uses htmlspecialchars with ENT_QUOTES
      * 
      * @param string $tag HTML tag name
      * @param string $inner inner HTML content
@@ -36,15 +36,12 @@ class Element
     {
         $this->tag = $tag;
         $this->inner = $inner;
-        foreach($attributes as $name => $value)
-        {
+        
+        foreach ($attributes as $name => $value) {
             // is boolean attribute ?
-            if(is_int($name))
-            {
+            if (is_int($name)) {
                 $this->$value = true;
-            }
-            else
-            {
+            } else {
                 $this->$name = $value;
             }
         }
@@ -53,6 +50,7 @@ class Element
     }
 
     // magic methods to set, get, check and unset attributes
+    // for boolean attribute, set to true
     public function __set(string $name, $value = null)
     {
         $this->attributes[$name] = is_array($value) ? implode(' ', $value) : $value;
@@ -60,7 +58,7 @@ class Element
 
     public function __get(string $name)
     {
-        return $this->attributes[$name] ?? '';
+        return $this->attributes[$name] ?? null;
     }
 
     public function __isset(string $name): bool
@@ -77,14 +75,14 @@ class Element
     public function __toString(): string
     {
         $attributes = '';
-        
+
         foreach ($this->attributes as $name => $value) {
-            $name = call_user_func($this->formatter, $name);
-            $attributes .= ' ' . ($value === true ? $name : sprintf('%s="%s"', $name, call_user_func($this->formatter, (string)$value)));
+            $name = ($this->formatter)($name);
+            $attributes .= ' ' . ($value === true ? $name : sprintf('%s="%s"', $name, ($this->formatter)((string)$value)));
         }
 
         return $this->inner === null
             ? sprintf('<%s%s/>', $this->tag, $attributes)
-            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, call_user_func($this->formatter, $this->inner), $this->tag);
+            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, ($this->formatter)($this->inner), $this->tag);
     }
 }
