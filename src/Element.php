@@ -25,12 +25,8 @@ class Element
      *  - string attributes ['id' => 'foo', 'name' => 'bar', 'class' => "foo bar"]
      *  - a mix of both ['id' => 'foo', 'checked', 'class' => "foo bar"]
      * 
-     * If not provided, the default $formatter uses htmlspecialchars with ENT_QUOTES
+     * If not provided, the default callable $formatter uses htmlspecialchars with ENT_QUOTES
      * 
-     * @param string $tag HTML tag name
-     * @param ?string $inner inner HTML content
-     * @param array $attributes HTML attributes
-     * @param ?callable $formatter function to format attribute values and inner content
      */
     public function __construct(string $tag, string $inner = null, array $attributes = [], callable $formatter = null)
     {
@@ -40,21 +36,18 @@ class Element
             return htmlspecialchars($value, ENT_QUOTES);
         };
 
-        foreach($attributes as $name => $value)
-        {
+        foreach ($attributes as $name => $value) {
             // is boolean attribute ?
-            if(is_int($name))
-            {
+            if (is_int($name)) {
                 $this->$value = true;
-            }
-            else
-            {
+            } else {
                 $this->$name = $value;
             }
         }
     }
 
     // magic methods to set, get, check and unset attributes
+    // for boolean attribute, set to true
     public function __set(string $name, $value = null)
     {
         $this->attributes[$name] = is_array($value) ? implode(' ', $value) : $value;
