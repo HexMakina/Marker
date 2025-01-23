@@ -129,4 +129,34 @@ final class ElementTest extends TestCase
             $element->__toString()
         );
     }
+
+    public function testFormatterFalse(): void
+    {
+        $element = new Element('div', 'Hello, World! & < > " \' ', ['class' => ['foo', 'bar'], 'id' => 'test'], false);
+
+        $this->assertEquals(
+            '<div class="foo bar" id="test">Hello, World! &amp; &lt; &gt; &quot; &#039; </div>',
+            $element->__toString()
+        );
+
+        $element = new Element('div', 'Hello, World! & < > " \' ', ['class' => [
+            'foo',
+            'bar'
+        ], 'id' => 'test', 'data-attr' => 'Hello, World! & < > " \' '], false);
+
+        $this->assertEquals(
+            '<div class="foo bar" id="test" data-attr="Hello, World! &amp; &lt; &gt; &quot; &#039; ">Hello, World! &amp; &lt; &gt; &quot; &#039; </div>',
+            $element->__toString()
+        );
+
+        $element = new Element('div', 'Hello, World! & < > " \' ', ['class' => [
+            'foo',
+            'bar'
+        ], 'id' => 'test', 'data-attr' => 'Hello, World! & < > " \' ', 'data-attr2' => 'Hello, World! & < > " \' '], false);
+
+        $this->assertEquals(
+            '<div class="foo bar" id="test" data-attr="Hello, World! &amp; &lt; &gt; &quot; &#039; " data-attr2="Hello, World! &amp; &lt; &gt; &quot; &#039; ">Hello, World! &amp; &lt; &gt; &quot; &#039; </div>',
+            $element->__toString()
+        ); 
+    }
 }

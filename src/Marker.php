@@ -17,13 +17,13 @@ class Marker extends Element
       * than
       * Element::img(null, ['src' => 'path/to/img.jpg', 'alt' => 'An alternative text', 'width' => 34, 'height' => 34])
       */
-    public static function img(string $src, string $alt, array $attributes = []): Element
+    public static function img(string $src, string $alt, array $attributes = [], $formatter): Element
     {
         $attributes['src'] ??= $src;
         $attributes['alt'] ??= $alt;
         $attributes['title'] ??= $alt;
 
-        return new Element('img', null, $attributes);
+        return new Element('img', null,$attributes, $formatter);
     }
 
     /**
@@ -32,10 +32,10 @@ class Marker extends Element
       * than
       * Marker::a('Click here', ['href' => controller/task/id', 'class' => 'nav'])
       */
-    public static function a(string $href, string $label, array $attributes = []): Element
+    public static function a(string $href, string $label, array $attributes = [], $formatter): Element
     {
-        $attributes['href'] ??= $href;
+        $attributes['href'] = $href;
 
-        return new Element('a', $label, $attributes);
+        return new Element('a', $label,$attributes, $formatter);
     }
 }

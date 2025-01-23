@@ -30,9 +30,9 @@ class Element
      * @param string $tag HTML tag name
      * @param string $inner inner HTML content
      * @param array $attributes HTML attributes
-     * @param callable $formatter function to format attribute values and inner content
+     * @param callable|bool $formatter function to format attribute values and inner content
      */
-    public function __construct(string $tag, string $inner = null, array $attributes = [], callable $formatter = null)
+    public function __construct(string $tag, string $inner = null, array $attributes = [], $formatter = null)
     {
         $this->tag = $tag;
         $this->inner = $inner;
@@ -49,9 +49,7 @@ class Element
             }
         }
 
-        $this->formatter = $formatter ?? function($value){
-            return htmlspecialchars($value, ENT_QUOTES);
-        };
+        $this->formatter = $formatter === false ? fn($v) => $v : $formatter ?? fn($value) => htmlspecialchars($value ?? '', ENT_QUOTES);
     }
 
     // magic methods to set, get, check and unset attributes
