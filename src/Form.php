@@ -198,7 +198,6 @@ class Form
 
         $label_text = $attributes['label'] ?? '';
         unset($attributes['label']);
-= 
         $input = new Element($tag, $content, $attributes);
 
         if($label_text){
