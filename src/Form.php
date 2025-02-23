@@ -110,9 +110,8 @@ class Form
                 $option_attributes['selected'] =  'selected';
             }
 
-            $options .= new Element('option', "$label", $option_attributes);
+            $options .= new Element('option', (string)$label, $option_attributes);
         }
-
         return $options;
     }
 
@@ -198,7 +197,7 @@ class Form
 
         $label_text = $attributes['label'] ?? '';
         unset($attributes['label']);
-        $input = new Element($tag, $content, $attributes);
+        $input = new Element($tag, $content, $attributes, false);
 
         if($label_text){
             if (!empty($attributes['label-wrap']))
