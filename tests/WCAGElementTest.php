@@ -17,12 +17,12 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('src="image.jpg"', $result);
         $this->assertStringContainsString('alt="An image"', $result);
         $this->assertStringContainsString('class="img-class"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('>', $result);
     }
 
     public function testImgWithEmptyAlt()
     {
-        $expected = '<img src="image.jpg" alt=""/>';
+        $expected = '<img src="image.jpg" alt="">';
 
         $img = WCAGElement::img('image.jpg');
         $this->assertEquals($expected, (string)$img);
@@ -34,7 +34,7 @@ class WCAGElementTest extends TestCase
         $this->assertEquals($expected, (string)$img);
 
         $img = WCAGElement::img('image.jpg', 0);
-        $this->assertEquals('<img src="image.jpg" alt="0"/>', (string)$img);
+        $this->assertEquals('<img src="image.jpg" alt="0">', (string)$img);
     }
 
     public function testFigureWithCaption()
@@ -91,7 +91,7 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('name="name"', $result);
         $this->assertStringContainsString('value="1"', $result);
         $this->assertStringContainsString('class="input-class"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('>', $result);
     }
 
     public function testInputWithoutType()
@@ -154,7 +154,7 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('alt="An area"', $result);
         $this->assertStringContainsString('shape="rect"', $result);
         $this->assertStringContainsString('coords="34,44,270,350"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('>', $result);
     }
 
     public function testAreaWithoutAlt()
@@ -189,7 +189,7 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('src="https://example.com"', $result);
         $this->assertStringContainsString('class="iframe-class"', $result);
         $this->assertStringContainsString('title="title-test"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('</iframe>', $result);
     }
 
     public function testAudio()
@@ -199,7 +199,7 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('src="audio.mp3"', $result);
         $this->assertStringContainsString('controls="controls"', $result);
         $this->assertStringContainsString('class="audio-class"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('</audio>', $result);
 
         $result = WCAGElement::audio('audio.mp3', ['controls' => '']);
         $this->assertStringContainsString('controls=""', $result);
@@ -220,7 +220,7 @@ class WCAGElementTest extends TestCase
         $this->assertStringContainsString('src="video.mp4"', $result);
         $this->assertStringContainsString('controls="controls"', $result);
         $this->assertStringContainsString('class="video-class"', $result);
-        $this->assertStringEndsWith('/>', $result);
+        $this->assertStringEndsWith('</video>', $result);
     }
 
     public function testVideoWithoutSrc()

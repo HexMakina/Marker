@@ -6,6 +6,14 @@ namespace HexMakina\Marker;
 
 class Element
 {
+    private const VOID_ELEMENTS = [
+        'area', 'base', 'br', 'col', 'embed', 'hr',
+        'img', 'input', 'link', 'meta', 'param',
+        'source', 'track', 'wbr',
+    ];
+
+    private const NAME_PATTERN = '/^[a-zA-Z][a-zA-Z0-9-]*$/';
+
     protected string $tag;
     protected ?string $inner = null;
     protected array $attributes = [];
@@ -34,9 +42,13 @@ class Element
      */
     public function __construct(string $tag, string $inner = null, array $attributes = [], $formatter = null)
     {
+        if (preg_match(self::NAME_PATTERN, $tag) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Invalid HTML tag name "%s"', $tag));
+        }
+
         $this->tag = $tag;
         $this->inner = $inner;
-        
+
         foreach ($attributes as $name => $value) {
             // is boolean attribute ?
             if (is_int($name)) {
@@ -53,6 +65,10 @@ class Element
     // for boolean attribute, set to true
     public function __set(string $name, $value = null)
     {
+        if (preg_match(self::NAME_PATTERN, $name) !== 1) {
+            throw new \InvalidArgumentException(sprintf('Invalid HTML attribute name "%s"', $name));
+        }
+
         $this->attributes[$name] = is_array($value) ? implode(' ', $value) : $value;
     }
 
@@ -81,8 +97,16 @@ class Element
             $attributes .= ' ' . ($value === true ? $name : sprintf('%s="%s"', $name, ($this->formatter)((string)$value)));
         }
 
-        return $this->inner === null
-            ? sprintf('<%s%s/>', $this->tag, $attributes)
-            : sprintf('<%s%s>%s</%s>', $this->tag, $attributes, ($this->formatter)($this->inner), $this->tag);
+        if (in_array(strtolower($this->tag), self::VOID_ELEMENTS, true)) {
+            return sprintf('<%s%s>', $this->tag, $attributes);
+        }
+
+        return sprintf(
+            '<%s%s>%s</%s>',
+            $this->tag,
+            $attributes,
+            ($this->formatter)($this->inner ?? ''),
+            $this->tag
+        );
     }
 }

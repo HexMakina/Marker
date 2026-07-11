@@ -26,7 +26,7 @@ final class ElementTest extends TestCase
     public function testVoidElement(): void
     {
         $this->assertEquals(
-            '<hr/>',
+            '<hr>',
             Element::hr()->__toString()
         );
     }
@@ -34,12 +34,12 @@ final class ElementTest extends TestCase
     public function testVoidElementWithAttribute(): void
     {
         $this->assertEquals(
-            '<img src="test.jpg"/>',
+            '<img src="test.jpg">',
             Element::img(null, ['src' => 'test.jpg'])->__toString()
         );
 
         $this->assertEquals(
-            '<img src="test.jpg"/>',
+            '<img src="test.jpg">',
             (new Element('img', null, ['src' => 'test.jpg']))->__toString()
         );
     }
@@ -49,7 +49,7 @@ final class ElementTest extends TestCase
         $element = new Element('input', null, ['checked']);
 
         $this->assertEquals(
-            '<input checked/>',
+            '<input checked>',
             $element->__toString()
         );
     }
@@ -58,19 +58,19 @@ final class ElementTest extends TestCase
     {
         $element = new Element('input', null, ['type' => 'radio', 'name' => 'gaga', 'checked']);
         $this->assertEquals(
-            '<input type="radio" name="gaga" checked/>',
+            '<input type="radio" name="gaga" checked>',
             $element->__toString()
         );
 
         $element->class = 'test';
         $this->assertEquals(
-            '<input type="radio" name="gaga" checked class="test"/>',
+            '<input type="radio" name="gaga" checked class="test">',
             $element->__toString()
         );
 
         $element->class = ['foo', 'bar'];
         $this->assertEquals(
-            '<input type="radio" name="gaga" checked class="foo bar"/>',
+            '<input type="radio" name="gaga" checked class="foo bar">',
             $element->__toString()
         );
     }
