@@ -40,7 +40,7 @@ class Element
      * @param array $attributes HTML attributes
      * @param callable|bool $formatter function to format attribute values and inner content
      */
-    public function __construct(string $tag, string $inner = null, array $attributes = [], $formatter = null)
+    public function __construct(string $tag, ?string $inner = null, array $attributes = [], $formatter = null)
     {
         if (preg_match(self::NAME_PATTERN, $tag) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid HTML tag name "%s"', $tag));
