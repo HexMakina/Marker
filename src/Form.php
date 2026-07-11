@@ -29,9 +29,9 @@ class Form
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
 
-        if ($attributes['type'] == 'datetime') {
+        if ($attributes['type'] === 'datetime') {
             $attributes['type'] = 'datetime-local';
-        } elseif ($attributes['type'] == 'password') {
+        } elseif ($attributes['type'] === 'password') {
             $attributes['value'] = '';
         }
 
@@ -46,7 +46,7 @@ class Form
      * @param array $attributes An array containing the attributes of the input element
      * @return string The generated HTML code for the input element
      */
-    public static function input(string $name = null, $value = null, array $attributes = []): string
+    public static function input(?string $name = null, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
@@ -69,7 +69,7 @@ class Form
     public static function textarea(string $name, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
-        return self::labelledField('textarea', $value ?? '', $attributes);
+        return self::labelledField('textarea', (string)($value ?? ''), $attributes);
     }
 
     /**
@@ -183,7 +183,7 @@ class Form
      * @param bool $trusted_content Whether $content is already-safe markup (e.g. rendered <option>s) that must not be escaped
      * @return string The HTML for the labelled form field
      */
-    private static function labelledField(string $tag, string $content = null, array $attributes = [], bool $trusted_content = false): string
+    private static function labelledField(string $tag, ?string $content = null, array $attributes = [], bool $trusted_content = false): string
     {
         // default the id to the field name, but never emit an empty id
         $attributes['id'] ??= $attributes['name'] ?? null;
@@ -198,7 +198,12 @@ class Form
         unset($attributes['label'], $attributes['label-wrap'], $attributes['tag']);
 
         // generate the field safely: the default formatter escapes content and attribute values.
-        // trusted content (pre-rendered markup) is passed through the identity formatter instead.
+        // trusted content (pre-rendered markup) is passed through the identity formatter instead,
+        // which would also leave attribute values raw: escape those here first
+        if ($trusted_content) {
+            $attributes = self::escapedAttributes($attributes);
+        }
+
         $input = (string)(new Element($tag, $content, $attributes, $trusted_content ? false : null));
 
         if ($label_text === '') {
@@ -214,5 +219,21 @@ class Form
         }
 
         return self::label($id, $label_text) . $input;
+    }
+
+    /**
+     * Escapes string attribute values, and string members of array values,
+     * the way Element's default formatter would; used when a field is built
+     * with the identity formatter to carry trusted, pre-rendered content.
+     */
+    private static function escapedAttributes(array $attributes): array
+    {
+        $esc = fn($value) => is_string($value) ? htmlspecialchars($value, ENT_QUOTES) : $value;
+
+        foreach ($attributes as $name => $value) {
+            $attributes[$name] = is_array($value) ? array_map($esc, $value) : $esc($value);
+        }
+
+        return $attributes;
     }
 }
