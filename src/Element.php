@@ -12,7 +12,7 @@ class Element
         'source', 'track', 'wbr',
     ];
 
-    private const NAME_PATTERN = '/^[a-zA-Z][a-zA-Z0-9-]*$/';
+    private const NAME_PATTERN = '/^[a-zA-Z][a-zA-Z0-9-]*$/D';
 
     protected string $tag;
     protected ?string $inner = null;
@@ -33,12 +33,15 @@ class Element
      *  - string attributes ['id' => 'foo', 'name' => 'bar', 'class' => "foo bar"]
      *  - a mix of both ['id' => 'foo', 'checked', 'class' => "foo bar"]
      * 
-     * If not provided, the default callable $formatter uses htmlspecialchars with ENT_QUOTES
-     * 
+     * The $formatter is applied to attribute names, values and inner content:
+     *  - null or true: the default, htmlspecialchars with ENT_QUOTES
+     *  - false: raw output, no formatting
+     *  - callable: custom formatting
+     *
      * @param string $tag HTML tag name
      * @param string $inner inner HTML content
      * @param array $attributes HTML attributes
-     * @param callable|bool $formatter function to format attribute values and inner content
+     * @param callable|bool|null $formatter function to format attribute names, values and inner content
      */
     public function __construct(string $tag, ?string $inner = null, array $attributes = [], $formatter = null)
     {
@@ -58,7 +61,13 @@ class Element
             }
         }
 
-        $this->formatter = $formatter === false ? fn($v) => $v : $formatter ?? fn($value) => htmlspecialchars($value ?? '', ENT_QUOTES);
+        if ($formatter === false) {
+            $formatter = fn($value) => $value;
+        } elseif ($formatter === null || $formatter === true) {
+            $formatter = fn($value) => htmlspecialchars($value ?? '', ENT_QUOTES);
+        }
+
+        $this->formatter = $formatter;
     }
 
     // magic methods to set, get, check and unset attributes
