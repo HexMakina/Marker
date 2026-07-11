@@ -51,15 +51,9 @@ class Form
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
 
-        if (
-            !isset($attributes['type'])
-            || isset($attributes['disabled'])
-            || in_array('disabled', $attributes, true)
-        ) {
-            // why are disabled field textual ?
-            // radio or checkbox can be disabled too..
-            $attributes['type'] = 'text';
-        }
+        // default to a text input only when no type was given;
+        // a disabled field keeps whatever type it was given (radio, checkbox, ...)
+        $attributes['type'] ??= 'text';
 
         return self::labelledField('input', null, $attributes);
     }
@@ -91,7 +85,7 @@ class Form
     {
         $attributes['name'] ??= $name;
         $options = self::options($option_list, $selected);
-        return self::labelledField('select', $options, $attributes);
+        return self::labelledField('select', $options, $attributes, true);
     }
 
     /**
@@ -106,7 +100,9 @@ class Form
         $options = '';
         foreach ($list as $value => $label) {
             $option_attributes = ['value' => $value];
-            if ($selected == $value) {
+            // strict comparison on the string form: avoids loose-typing surprises
+            // while still matching numeric-string $selected against integer array keys
+            if ($selected !== null && (string)$selected === (string)$value) {
                 $option_attributes['selected'] =  'selected';
             }
 
@@ -161,24 +157,21 @@ class Form
      */
     public static function submit(string $id, string $label, array $attributes = []): string
     {
-        $ret = '';
+        // remove the internal pseudo-attribute before it can leak into the markup
+        $as_input = (($attributes['tag'] ?? null) === 'input');
+        unset($attributes['tag'], $attributes['name']);
 
         $attributes['type'] = 'submit';
-        unset($attributes['name']);
-
         $attributes['id'] ??= $id;
-        $attributes['value'] ??= $label;
 
-        if (isset($attributes['tag']) && $attributes['tag'] === 'input') {
-            unset($attributes['tag']);
-            $ret .= new Element('input', '', $attributes);
-        } else {
-            unset($attributes['tag']);
-            unset($attributes['value']);
-            $ret .= self::button($label, $attributes);
+        if ($as_input) {
+            $attributes['value'] ??= $label;
+            // input is a void element: no inner content, no closing tag
+            return (string)(new Element('input', null, $attributes));
         }
 
-        return $ret;
+        unset($attributes['value']);
+        return self::button($label, $attributes);
     }
 
     /**
@@ -187,27 +180,39 @@ class Form
      * @param string $tag The HTML tag of the form field element
      * @param string|null $content The content of the form field element
      * @param array $attributes Additional attributes to add to the form field element
+     * @param bool $trusted_content Whether $content is already-safe markup (e.g. rendered <option>s) that must not be escaped
      * @return string The HTML for the labelled form field
      */
-    private static function labelledField(string $tag, string $content = null, array $attributes = []): string
+    private static function labelledField(string $tag, string $content = null, array $attributes = [], bool $trusted_content = false): string
     {
-        $ret = '';
-        
-        $attributes['id'] ??= $attributes['name'] ?? '';
-
-        $label_text = $attributes['label'] ?? '';
-        unset($attributes['label']);
-        $input = new Element($tag, $content, $attributes, false);
-
-        if($label_text){
-            if (!empty($attributes['label-wrap']))
-                $ret = self::label(null, $label_text.$input);
-            else
-                $ret = self::label($attributes['id'], $label_text).$input;
+        // default the id to the field name, but never emit an empty id
+        $attributes['id'] ??= $attributes['name'] ?? null;
+        if (($attributes['id'] ?? '') === '') {
+            unset($attributes['id']);
         }
-        else
-            $ret = $input;
+        $id = $attributes['id'] ?? null;
 
-        return (string)$ret;
+        // extract internal pseudo-attributes so they are never rendered on the element
+        $label_text = $attributes['label'] ?? '';
+        $label_wrap = !empty($attributes['label-wrap']);
+        unset($attributes['label'], $attributes['label-wrap'], $attributes['tag']);
+
+        // generate the field safely: the default formatter escapes content and attribute values.
+        // trusted content (pre-rendered markup) is passed through the identity formatter instead.
+        $input = (string)(new Element($tag, $content, $attributes, $trusted_content ? false : null));
+
+        if ($label_text === '') {
+            return $input;
+        }
+
+        // wrap the field in its label when asked, or when there is no id to bind a sibling label to
+        if ($label_wrap || $id === null) {
+            // escape the label text on its own, then wrap it together with the
+            // already-safe field markup as trusted HTML, so nothing is re-escaped
+            $safe_label = htmlspecialchars($label_text, ENT_QUOTES);
+            return (string)(new Element('label', $safe_label . $input, [], false));
+        }
+
+        return self::label($id, $label_text) . $input;
     }
 }
