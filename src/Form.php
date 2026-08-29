@@ -46,7 +46,7 @@ class Form
      * @param array $attributes An array containing the attributes of the input element
      * @return string The generated HTML code for the input element
      */
-    public static function input(string $name = null, $value = null, array $attributes = []): string
+    public static function input(?string $name = null, $value = null, array $attributes = []): string
     {
         $attributes['name'] ??= $name;
         $attributes['value'] ??= $value;
@@ -110,9 +110,8 @@ class Form
                 $option_attributes['selected'] =  'selected';
             }
 
-            $options .= new Element('option', "$label", $option_attributes);
+            $options .= new Element('option', (string)$label, $option_attributes);
         }
-
         return $options;
     }
 
@@ -190,17 +189,25 @@ class Form
      * @param array $attributes Additional attributes to add to the form field element
      * @return string The HTML for the labelled form field
      */
-    private static function labelledField(string $tag, string $content = null, array $attributes = []): string
+    private static function labelledField(string $tag, ?string $content = null, array $attributes = []): string
     {
+        $ret = '';
+        
         $attributes['id'] ??= $attributes['name'] ?? '';
 
-        $label = '';
-        if (isset($attributes['label'])) {
-            $label = self::label($attributes['id'], $attributes['label']);
-            unset($attributes['label']);
-        }
-        
+        $label_text = $attributes['label'] ?? '';
+        unset($attributes['label']);
+        $input = new Element($tag, $content, $attributes, false);
 
-        return $label . (new Element($tag, $content, $attributes));
+        if($label_text){
+            if (!empty($attributes['label-wrap']))
+                $ret = self::label(null, $label_text.$input);
+            else
+                $ret = self::label($attributes['id'], $label_text).$input;
+        }
+        else
+            $ret = $input;
+
+        return (string)$ret;
     }
 }

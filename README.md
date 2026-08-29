@@ -59,6 +59,11 @@ $element = new Element('input', null, [
 <input type="checkbox" checked disabled class="checkbutton"/>
 
 
+# Class WCAGElement
+This class extends the Element class and provides methods to enforce WCAG (Web Content Accessibility Guidelines) compliance for certain HTML elements.
+
+
+
 # Class Marker
 
 # Class Form
